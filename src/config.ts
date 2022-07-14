@@ -1,12 +1,12 @@
 export const SITE = {
-  title: "Bun Time",
+  title: "Bun.js",
   description: "Bun is a fast all-in-one JavaScript runtime.",
   defaultLanguage: "en_US",
 };
 
 export const OPEN_GRAPH = {
   image: {
-    src: "https://bun.sh/logo.svg",
+    src: "https://bun.sh/share.png",
     alt: "Jolly looking bun",
   },
   twitter: "jarredsummer",
