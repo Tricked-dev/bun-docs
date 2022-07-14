@@ -1,0 +1,739 @@
+<!DOCTYPE HTML>
+<html lang="en" class="sidebar-visible no-js ayu">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>bun:sqlite - Bun Runtime</title>
+        <!-- Custom HTML head -->
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+    </head>
+    <body>
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">
+            var path_to_root = "";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "ayu";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('ayu')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="installing.html"><strong aria-hidden="true">1.</strong> Installing</a></li><li class="chapter-item expanded "><a href="using.html"><strong aria-hidden="true">2.</strong> Using Bun</a></li><li class="chapter-item expanded "><a href="packagemanager.html"><strong aria-hidden="true">3.</strong> Using bun as a package manager</a></li><li class="chapter-item expanded "><a href="taskrunner.html"><strong aria-hidden="true">4.</strong> Using bun as a task runner</a></li><li class="chapter-item expanded "><a href="examples.html"><strong aria-hidden="true">5.</strong> Examples</a></li><li class="chapter-item expanded "><a href="limitations.html"><strong aria-hidden="true">6.</strong> Limitations</a></li><li class="chapter-item expanded "><a href="configuration.html"><strong aria-hidden="true">7.</strong> Configuration</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="loaders.html"><strong aria-hidden="true">7.1.</strong> Loaders</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="css.html"><strong aria-hidden="true">7.1.1.</strong> css</a></li></ol></li></ol></li><li class="chapter-item expanded "><a href="frameworks.html"><strong aria-hidden="true">8.</strong> frameworks</a></li><li class="chapter-item expanded "><a href="troubleshooting.html"><strong aria-hidden="true">9.</strong> troubleshooting</a></li><li class="chapter-item expanded "><a href="reference.html"><strong aria-hidden="true">10.</strong> Reference</a></li><li class="chapter-item expanded "><a href="bun_serve.html"><strong aria-hidden="true">11.</strong> Bun Serve</a></li><li class="chapter-item expanded "><a href="bun_write.html"><strong aria-hidden="true">12.</strong> Bun Write</a></li><li class="chapter-item expanded "><a href="bun_sqlite.html" class="active"><strong aria-hidden="true">13.</strong> bun:sqlite</a></li><li class="chapter-item expanded "><a href="ffi/index.html"><strong aria-hidden="true">14.</strong> bun:ffi</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="ffi/low_overhead.html"><strong aria-hidden="true">14.1.</strong> Low Overhead FFI</a></li><li class="chapter-item expanded "><a href="ffi/usage.html"><strong aria-hidden="true">14.2.</strong> Usage</a></li><li class="chapter-item expanded "><a href="ffi/supported_types.html"><strong aria-hidden="true">14.3.</strong> Supported Types</a></li></ol></li><li class="chapter-item expanded "><a href="enviromentvariables.html"><strong aria-hidden="true">15.</strong> Environment variables</a></li><li class="chapter-item expanded "><a href="transpiler.html"><strong aria-hidden="true">16.</strong> Transpiler</a></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu (default)</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Bun Runtime</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h2 id="bunsqlite-sqlite3-module"><a class="header" href="#bunsqlite-sqlite3-module">bun:sqlite (SQLite3 module)</a></h2>
+<p><code>bun:sqlite</code> is a high-performance built-in <a href="https://www.sqlite.org/">SQLite3</a> module for bun.js.</p>
+<ul>
+<li>Simple, synchronous API (synchronous <em>is</em> faster)</li>
+<li>Transactions</li>
+<li>Binding named &amp; positional parameters</li>
+<li>Prepared statements</li>
+<li>Automatic type conversions (<code>BLOB</code> becomes <code>Uint8Array</code>)</li>
+<li>toString() prints as SQL</li>
+</ul>
+<p>Installation:</p>
+<pre><code class="language-sh"># there's nothing to install
+# bun:sqlite is built-in to bun.js
+</code></pre>
+<p>Example:</p>
+<pre><code class="language-ts">import { Database } from &quot;bun:sqlite&quot;;
+
+const db = new Database(&quot;mydb.sqlite&quot;);
+db.run(
+  &quot;CREATE TABLE IF NOT EXISTS foo (id INTEGER PRIMARY KEY AUTOINCREMENT, greeting TEXT)&quot;
+);
+db.run(&quot;INSERT INTO foo (greeting) VALUES (?)&quot;, &quot;Welcome to bun!&quot;);
+db.run(&quot;INSERT INTO foo (greeting) VALUES (?)&quot;, &quot;Hello World!&quot;);
+
+// get the first row
+db.query(&quot;SELECT * FROM foo&quot;).get();
+// { id: 1, greeting: &quot;Welcome to bun!&quot; }
+
+// get all rows
+db.query(&quot;SELECT * FROM foo&quot;).all();
+// [
+//   { id: 1, greeting: &quot;Welcome to bun!&quot; },
+//   { id: 2, greeting: &quot;Hello World!&quot; },
+// ]
+
+// get all rows matching a condition
+db.query(&quot;SELECT * FROM foo WHERE greeting = ?&quot;).all(&quot;Welcome to bun!&quot;);
+// [
+//   { id: 1, greeting: &quot;Welcome to bun!&quot; },
+// ]
+
+// get first row matching a named condition
+db.query(&quot;SELECT * FROM foo WHERE greeting = $greeting&quot;).get({
+  $greeting: &quot;Welcome to bun!&quot;,
+});
+// [
+//   { id: 1, greeting: &quot;Welcome to bun!&quot; },
+// ]
+</code></pre>
+<h3 id="bunsqlite-benchmark"><a class="header" href="#bunsqlite-benchmark">bun:sqlite Benchmark</a></h3>
+<p>Database: <a href="https://github.com/jpwhite3/northwind-SQLite3/blob/master/Northwind_large.sqlite.zip">Northwind Traders</a>.</p>
+<p>This benchmark can be run from <a href="./bench/sqlite">./bench/sqlite</a>.</p>
+<p>Here are results from an M1 Pro (64GB) on macOS 12.3.1.</p>
+<p><strong>SELECT * FROM &quot;Order&quot;</strong></p>
+<div class="table-wrapper"><table><thead><tr><th>Library</th><th>Runtime</th><th>ms/iter</th></tr></thead><tbody>
+<tr><td>bun:sqlite3</td><td>Bun 0.0.83</td><td>14.31 (1x)</td></tr>
+<tr><td>better-sqlite3</td><td>Node 18.0.0</td><td>40.81 (2.8x slower)</td></tr>
+<tr><td>deno.land/x/sqlite</td><td>Deno 1.21.2</td><td>125.96 (8.9x slower)</td></tr>
+</tbody></table>
+</div>
+<p><strong>SELECT * FROM &quot;Product&quot;</strong></p>
+<div class="table-wrapper"><table><thead><tr><th>Library</th><th>Runtime</th><th>us/iter</th></tr></thead><tbody>
+<tr><td>bun:sqlite3</td><td>Bun 0.0.83</td><td>33.85 (1x)</td></tr>
+<tr><td>better-sqlite3</td><td>Node 18.0.0</td><td>121.09 (3.5x slower)</td></tr>
+<tr><td>deno.land/x/sqlite</td><td>Deno 1.21.2</td><td>187.64 (8.9x slower)</td></tr>
+</tbody></table>
+</div>
+<p><strong>SELECT * FROM &quot;OrderDetail&quot;</strong></p>
+<div class="table-wrapper"><table><thead><tr><th>Library</th><th>Runtime</th><th>ms/iter</th></tr></thead><tbody>
+<tr><td>bun:sqlite3</td><td>Bun 0.0.83</td><td>146.92 (1x)</td></tr>
+<tr><td>better-sqlite3</td><td>Node 18.0.0</td><td>875.73 (5.9x slower)</td></tr>
+<tr><td>deno.land/x/sqlite</td><td>Deno 1.21.2</td><td>541.15 (3.6x slower)</td></tr>
+</tbody></table>
+</div>
+<p>In screenshot form (which has a different sorting order)</p>
+<img width="738" alt="image" src="https://user-images.githubusercontent.com/709451/168459263-8cd51ca3-a924-41e9-908d-cf3478a3b7f3.png">
+<h3 id="getting-started-with-bunsqlite"><a class="header" href="#getting-started-with-bunsqlite">Getting started with bun:sqlite</a></h3>
+<p>bun:sqlite's API is loosely based on <a href="https://github.com/JoshuaWise/better-sqlite3">better-sqlite3</a>, though the implementation is different.</p>
+<p>bun:sqlite has two classes:</p>
+<ul>
+<li><code>class Database</code></li>
+<li><code>class Statement</code></li>
+</ul>
+<h4 id="database"><a class="header" href="#database"><code>Database</code></a></h4>
+<p>Calling <code>new Database(filename)</code> opens or creates the SQLite database.</p>
+<pre><code class="language-ts">constructor(
+      filename: string,
+      options?:
+        | number
+        | {
+            /**
+             * Open the database as read-only (no write operations, no create).
+             *
+             * Equivalent to {@link constants.SQLITE_OPEN_READONLY}
+             */
+            readonly?: boolean;
+            /**
+             * Allow creating a new database
+             *
+             * Equivalent to {@link constants.SQLITE_OPEN_CREATE}
+             */
+            create?: boolean;
+            /**
+             * Open the database as read-write
+             *
+             * Equivalent to {@link constants.SQLITE_OPEN_READWRITE}
+             */
+            readwrite?: boolean;
+          }
+    );
+</code></pre>
+<p>To open or create a SQLite3 database:</p>
+<pre><code class="language-ts">import { Database } from &quot;bun:sqlite&quot;;
+
+const db = new Database(&quot;mydb.sqlite&quot;);
+</code></pre>
+<p>Open an in-memory database:</p>
+<pre><code class="language-ts">import { Database } from &quot;bun:sqlite&quot;;
+
+// all of these do the same thing
+var db = new Database(&quot;:memory:&quot;);
+var db = new Database();
+var db = new Database(&quot;&quot;);
+</code></pre>
+<p>Open read-write and throw if the database doesn't exist:</p>
+<pre><code class="language-ts">import { Database } from &quot;bun:sqlite&quot;;
+const db = new Database(&quot;mydb.sqlite&quot;, { readwrite: true });
+</code></pre>
+<p>Open read-only and throw if the database doesn't exist:</p>
+<pre><code class="language-ts">import { Database } from &quot;bun:sqlite&quot;;
+const db = new Database(&quot;mydb.sqlite&quot;, { readonly: true });
+</code></pre>
+<p>Open read-write, don't throw if new file:</p>
+<pre><code class="language-ts">import { Database } from &quot;bun:sqlite&quot;;
+const db = new Database(&quot;mydb.sqlite&quot;, { readonly: true, create: true });
+</code></pre>
+<p>Open a database from a <code>Uint8Array</code>:</p>
+<pre><code class="language-ts">import { Database } from &quot;bun:sqlite&quot;;
+import { readFileSync } from &quot;fs&quot;;
+
+// unlike passing a filepath, this will not persist any changes to disk
+// it will be read-write but not persistent
+const db = new Database(readFileSync(&quot;mydb.sqlite&quot;));
+</code></pre>
+<p>Close a database:</p>
+<pre><code class="language-ts">var db = new Database();
+db.close();
+</code></pre>
+<p>Note: <code>close()</code> is called automatically when the database is garbage collected. It is safe to call multiple times but has no effect after the first.</p>
+<h4 id="databaseprototypequery"><a class="header" href="#databaseprototypequery">Database.prototype.query</a></h4>
+<p><code>query(sql)</code> creates a <code>Statement</code> for the given SQL and caches it, but does not execute it.</p>
+<pre><code class="language-ts">class Database {
+  query(sql: string): Statement;
+}
+</code></pre>
+<p><code>query</code> returns a <code>Statement</code> object.</p>
+<p>It performs the same operation as <code>Database.prototype.prepare</code>, except:</p>
+<ul>
+<li><code>query</code> caches the prepared statement in the <code>Database</code> object</li>
+<li><code>query</code> doesn't bind parameters</li>
+</ul>
+<p>This intended to make it easier for <code>bun:sqlite</code> to be fast by default. Calling <code>.prepare</code> compiles a SQLite query, which can take some time, so it's better to cache those a little.</p>
+<p>You can bind parameters on any call to a statement.</p>
+<pre><code class="language-js">import { Database } from &quot;bun:sqlite&quot;;
+
+// generate some data
+var db = new Database();
+db.run(
+  &quot;CREATE TABLE foo (id INTEGER PRIMARY KEY AUTOINCREMENT, greeting TEXT)&quot;
+);
+db.run(&quot;INSERT INTO foo (greeting) VALUES ($greeting)&quot;, {
+  $greeting: &quot;Welcome to bun&quot;,
+});
+
+// get the query
+const stmt = db.query(&quot;SELECT * FROM foo WHERE greeting = ?&quot;);
+
+// run the query
+stmt.all(&quot;Welcome to bun!&quot;);
+stmt.get(&quot;Welcome to bun!&quot;);
+stmt.run(&quot;Welcome to bun!&quot;);
+</code></pre>
+<h4 id="databaseprototypeprepare"><a class="header" href="#databaseprototypeprepare">Database.prototype.prepare</a></h4>
+<p><code>prepare(sql)</code> creates a <code>Statement</code> for the given SQL, but does not execute it.</p>
+<p>Unlike <code>query()</code>, this does not cache the compiled query.</p>
+<pre><code class="language-ts">import { Database } from &quot;bun:sqlite&quot;;
+
+// generate some data
+var db = new Database();
+db.run(
+  &quot;CREATE TABLE foo (id INTEGER PRIMARY KEY AUTOINCREMENT, greeting TEXT)&quot;
+);
+
+// compile the prepared statement
+const stmt = db.prepare(&quot;SELECT * FROM foo WHERE bar = ?&quot;);
+
+// run the prepared statement
+stmt.all(&quot;baz&quot;);
+</code></pre>
+<p>Internally, this calls <a href="https://www.sqlite.org/c3ref/prepare.html"><code>sqlite3_prepare_v3</code></a>.</p>
+<h4 id="databaseprototypeexec--databaseprototyperun"><a class="header" href="#databaseprototypeexec--databaseprototyperun">Database.prototype.exec &amp; Database.prototype.run</a></h4>
+<p><code>exec</code> is for one-off executing a query which does not need to return anything.
+<code>run</code> is an alias.</p>
+<pre><code class="language-ts">class Database {
+  // exec is an alias for run
+  exec(sql: string, ...params: ParamsType): void;
+  run(sql: string, ...params: ParamsType): void;
+}
+</code></pre>
+<p>This is useful for things like</p>
+<p>Creating a table:</p>
+<pre><code class="language-ts">import { Database } from &quot;bun:sqlite&quot;;
+
+var db = new Database();
+db.exec(
+  &quot;CREATE TABLE foo (id INTEGER PRIMARY KEY AUTOINCREMENT, greeting TEXT)&quot;
+);
+</code></pre>
+<p>Inserting one row:</p>
+<pre><code class="language-ts">import { Database } from &quot;bun:sqlite&quot;;
+
+var db = new Database();
+db.exec(
+  &quot;CREATE TABLE foo (id INTEGER PRIMARY KEY AUTOINCREMENT, greeting TEXT)&quot;
+);
+
+// insert one row
+db.exec(&quot;INSERT INTO foo (greeting) VALUES ($greeting)&quot;, {
+  $greeting: &quot;Welcome to bun&quot;,
+});
+</code></pre>
+<p>For queries which aren't intended to be run multiple times, it should be faster to use <code>exec()</code> than <code>prepare()</code> or <code>query()</code> because it doesn't create a <code>Statement</code> object.</p>
+<p>Internally, this function calls <a href="https://www.sqlite.org/c3ref/prepare.html"><code>sqlite3_prepare</code></a>, <a href="https://www.sqlite.org/c3ref/step.html"><code>sqlite3_step</code></a>, and <a href="https://www.sqlite.org/c3ref/finalize.html"><code>sqlite3_finalize</code></a>.</p>
+<h4 id="databaseprototypetransaction"><a class="header" href="#databaseprototypetransaction">Database.prototype.transaction</a></h4>
+<p>Creates a function that always runs inside a transaction. When the function is invoked, it will begin a new transaction. When the function returns, the transaction will be committed. If an exception is thrown, the transaction will be rolled back (and the exception will propagate as usual).</p>
+<pre><code class="language-ts">// setup
+import { Database } from &quot;bun:sqlite&quot;;
+const db = Database.open(&quot;:memory:&quot;);
+db.exec(
+  &quot;CREATE TABLE cats (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT UNIQUE, age INTEGER)&quot;
+);
+
+const insert = db.prepare(&quot;INSERT INTO cats (name, age) VALUES ($name, $age)&quot;);
+const insertMany = db.transaction((cats) =&gt; {
+  for (const cat of cats) insert.run(cat);
+});
+
+insertMany([
+  { $name: &quot;Joey&quot;, $age: 2 },
+  { $name: &quot;Sally&quot;, $age: 4 },
+  { $name: &quot;Junior&quot;, $age: 1 },
+]);
+</code></pre>
+<p>Transaction functions can be called from inside other transaction functions. When doing so, the inner transaction becomes a savepoint.</p>
+<pre><code class="language-ts">// setup
+import { Database } from &quot;bun:sqlite&quot;;
+const db = Database.open(&quot;:memory:&quot;);
+db.exec(
+  &quot;CREATE TABLE expenses (id INTEGER PRIMARY KEY AUTOINCREMENT, note TEXT, dollars INTEGER);&quot;
+);
+db.exec(
+  &quot;CREATE TABLE cats (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT UNIQUE, age INTEGER)&quot;
+);
+const newExpense = db.prepare(
+  &quot;INSERT INTO expenses (note, dollars) VALUES (?, ?)&quot;
+);
+const insert = db.prepare(&quot;INSERT INTO cats (name, age) VALUES ($name, $age)&quot;);
+const insertMany = db.transaction((cats) =&gt; {
+  for (const cat of cats) insert.run(cat);
+});
+
+const adopt = db.transaction((cats) =&gt; {
+  newExpense.run(&quot;adoption fees&quot;, 20);
+  insertMany(cats); // nested transaction
+});
+
+adopt([
+  { $name: &quot;Joey&quot;, $age: 2 },
+  { $name: &quot;Sally&quot;, $age: 4 },
+  { $name: &quot;Junior&quot;, $age: 1 },
+]);
+</code></pre>
+<p>Transactions also come with <code>deferred</code>, <code>immediate</code>, and <code>exclusive</code> versions.</p>
+<pre><code class="language-ts">insertMany(cats); // uses &quot;BEGIN&quot;
+insertMany.deferred(cats); // uses &quot;BEGIN DEFERRED&quot;
+insertMany.immediate(cats); // uses &quot;BEGIN IMMEDIATE&quot;
+insertMany.exclusive(cats); // uses &quot;BEGIN EXCLUSIVE&quot;
+</code></pre>
+<p>Any arguments passed to the transaction function will be forwarded to the wrapped function, and any values returned from the wrapped function will be returned from the transaction function. The wrapped function will also have access to the same binding as the transaction function.</p>
+<p>bun:sqlite's transaction implementation is based on <a href="https://github.com/JoshuaWise/better-sqlite3/blob/master/docs/api.md#transactionfunction---function">better-sqlite3</a> (along with this section of the docs), so thanks to Joshua Wise and better-sqlite3 contributors.</p>
+<h4 id="databaseprototypeserialize"><a class="header" href="#databaseprototypeserialize">Database.prototype.serialize</a></h4>
+<p>SQLite has a built-in way to <a href="https://www.sqlite.org/c3ref/serialize.html">serialize</a> and <a href="https://www.sqlite.org/c3ref/deserialize.html">deserialize</a> databases to and from memory.</p>
+<p><code>bun:sqlite</code> fully supports it:</p>
+<pre><code class="language-ts">var db = new Database();
+
+// write some data
+db.run(
+  &quot;CREATE TABLE foo (id INTEGER PRIMARY KEY AUTOINCREMENT, greeting TEXT)&quot;
+);
+db.run(&quot;INSERT INTO foo VALUES (?)&quot;, &quot;Welcome to bun!&quot;);
+db.run(&quot;INSERT INTO foo VALUES (?)&quot;, &quot;Hello World!&quot;);
+
+const copy = db.serialize();
+// =&gt; Uint8Array
+
+const db2 = new Database(copy);
+db2.query(&quot;SELECT * FROM foo&quot;).all();
+// =&gt; [
+//   { id: 1, greeting: &quot;Welcome to bun!&quot; },
+//   { id: 2, greeting: &quot;Hello World!&quot; },
+// ]
+</code></pre>
+<p><code>db.serialize()</code> returns a <code>Uint8Array</code> of the database.</p>
+<p>Internally, it calls <a href="https://www.sqlite.org/c3ref/serialize.html"><code>sqlite3_serialize</code></a>.</p>
+<h4 id="databaseprototypeloadextension"><a class="header" href="#databaseprototypeloadextension">Database.prototype.loadExtension</a></h4>
+<p><code>bun:sqlite</code> supports <a href="https://www.sqlite.org/loadext.html">SQLite extensions</a>.</p>
+<p>To load a SQLite extension, call <code>Database.prototype.loadExtension(name)</code>:</p>
+<pre><code class="language-ts">import { Database } from &quot;bun:sqlite&quot;;
+
+var db = new Database();
+
+db.loadExtension(&quot;myext&quot;);
+</code></pre>
+<p>If you're on macOS, you will need to first use a custom SQLite install (you can install with homebrew). By default, bun uses Apple's proprietary build of SQLite because it benchmarks about 50% faster. However, they disabled extension support, so you will need to have a custom build of SQLite to use extensions on macOS.</p>
+<pre><code class="language-ts">import { Database } from &quot;bun:sqlite&quot;;
+
+// on macOS, this must be run before any other calls to `Database`
+// if called on linux, it will return true and do nothing
+// on linux it will still check that a string was passed
+Database.setCustomSQLite(&quot;/path/to/sqlite.dylib&quot;);
+
+var db = new Database();
+
+db.loadExtension(&quot;myext&quot;);
+</code></pre>
+<p>To install sqlite with homebrew:</p>
+<pre><code class="language-bash">brew install sqlite
+</code></pre>
+<h4 id="statement"><a class="header" href="#statement">Statement</a></h4>
+<p><code>Statement</code> is a prepared statement. Use it to run queries that get results.</p>
+<p>TLDR:</p>
+<ul>
+<li><a href="#statementall"><code>Statement.all(...optionalParamsToBind)</code></a> returns all rows as an array of objects</li>
+<li><a href="#statementvalues"><code>Statement.values(...optionalParamsToBind)</code></a> returns all rows as an array of arrays</li>
+<li><a href="#statementget"><code>Statement.get(...optionalParamsToBind)</code></a> returns the first row as an object</li>
+<li><a href="#statementrun"><code>Statement.run(...optionalParamsToBind)</code></a> runs the statement and returns nothing</li>
+<li><a href="#statementfinalize"><code>Statement.finalize()</code></a> closes the statement</li>
+<li><a href="#statementtostring"><code>Statement.toString()</code></a> prints the expanded SQL, including bound parameters</li>
+<li><code>get Statement.columnNames</code> get the returned column names</li>
+<li><code>get Statement.paramsCount</code> how many parameters are expected?</li>
+</ul>
+<p>You can bind parameters on any call to a statement. Named parameters and positional parameters are supported. Bound parameters are remembered between calls and reset the next time you pass parameters to bind.</p>
+<pre><code class="language-ts">import { Database } from &quot;bun:sqlite&quot;;
+
+// setup
+var db = new Database();
+db.run(
+  &quot;CREATE TABLE foo (id INTEGER PRIMARY KEY AUTOINCREMENT, greeting TEXT)&quot;
+);
+db.run(&quot;INSERT INTO foo VALUES (?)&quot;, &quot;Welcome to bun!&quot;);
+db.run(&quot;INSERT INTO foo VALUES (?)&quot;, &quot;Hello World!&quot;);
+
+// Statement object
+var statement = db.query(&quot;SELECT * FROM foo&quot;);
+
+// returns all the rows
+statement.all();
+
+// returns the first row
+statement.get();
+
+// runs the query, without returning anything
+statement.run();
+</code></pre>
+<h4 id="statementall"><a class="header" href="#statementall">Statement.all</a></h4>
+<p>Calling <code>all()</code> on a <code>Statement</code> instance runs the query and returns the rows as an array of objects.</p>
+<pre><code class="language-ts">import { Database } from &quot;bun:sqlite&quot;;
+
+// setup
+var db = new Database();
+db.run(
+  &quot;CREATE TABLE foo (id INTEGER PRIMARY KEY AUTOINCREMENT, greeting TEXT, count INTEGER)&quot;
+);
+db.run(&quot;INSERT INTO foo (greeting, count) VALUES (?, ?)&quot;, &quot;Welcome to bun!&quot;, 2);
+db.run(&quot;INSERT INTO foo (greeting, count) VALUES (?, ?)&quot;, &quot;Hello World!&quot;, 0);
+db.run(
+  &quot;INSERT INTO foo (greeting, count) VALUES (?, ?)&quot;,
+  &quot;Welcome to bun!!!!&quot;,
+  2
+);
+
+// Statement object
+var statement = db.query(&quot;SELECT * FROM foo WHERE count = ?&quot;);
+
+// return all the query results, binding 2 to the count parameter
+statement.all(2);
+// =&gt; [
+//   { id: 1, greeting: &quot;Welcome to bun!&quot;, count: 2 },
+//   { id: 3, greeting: &quot;Welcome to bun!!!!&quot;, count: 2 },
+// ]
+</code></pre>
+<p>Internally, this calls <a href="https://www.sqlite.org/capi3ref.html#sqlite3_reset"><code>sqlite3_reset</code></a> and repeatedly calls <a href="https://www.sqlite.org/capi3ref.html#sqlite3_step"><code>sqlite3_step</code></a> until it returns <code>SQLITE_DONE</code>.</p>
+<h4 id="statementvalues"><a class="header" href="#statementvalues">Statement.values</a></h4>
+<p>Calling <code>values()</code> on a <code>Statement</code> instance runs the query and returns the rows as an array of arrays.</p>
+<pre><code class="language-ts">import { Database } from &quot;bun:sqlite&quot;;
+
+// setup
+var db = new Database();
+db.run(
+  &quot;CREATE TABLE foo (id INTEGER PRIMARY KEY AUTOINCREMENT, greeting TEXT, count INTEGER)&quot;
+);
+db.run(&quot;INSERT INTO foo (greeting, count) VALUES (?, ?)&quot;, &quot;Welcome to bun!&quot;, 2);
+db.run(&quot;INSERT INTO foo (greeting, count) VALUES (?, ?)&quot;, &quot;Hello World!&quot;, 0);
+db.run(
+  &quot;INSERT INTO foo (greeting, count) VALUES (?, ?)&quot;,
+  &quot;Welcome to bun!!!!&quot;,
+  2
+);
+
+// Statement object
+var statement = db.query(&quot;SELECT * FROM foo WHERE count = ?&quot;);
+
+// return all the query results as an array of arrays, binding 2 to &quot;count&quot;
+statement.values(2);
+// =&gt; [
+//   [ 1, &quot;Welcome to bun!&quot;, 2 ],
+//   [ 3, &quot;Welcome to bun!!!!&quot;, 2 ],
+// ]
+
+// Statement object, but with named parameters
+var statement = db.query(&quot;SELECT * FROM foo WHERE count = $count&quot;);
+
+// return all the query results as an array of arrays, binding 2 to &quot;count&quot;
+statement.values({ $count: 2 });
+// =&gt; [
+//   [ 1, &quot;Welcome to bun!&quot;, 2 ],
+//   [ 3, &quot;Welcome to bun!!!!&quot;, 2 ],
+// ]
+</code></pre>
+<p>Internally, this calls <a href="https://www.sqlite.org/capi3ref.html#sqlite3_reset"><code>sqlite3_reset</code></a> and repeatedly calls <a href="https://www.sqlite.org/capi3ref.html#sqlite3_step"><code>sqlite3_step</code></a> until it returns <code>SQLITE_DONE</code>.</p>
+<h4 id="statementget"><a class="header" href="#statementget">Statement.get</a></h4>
+<p>Calling <code>get()</code> on a <code>Statement</code> instance runs the query and returns the first result as an object.</p>
+<pre><code class="language-ts">import { Database } from &quot;bun:sqlite&quot;;
+
+// setup
+var db = new Database();
+db.run(
+  &quot;CREATE TABLE foo (id INTEGER PRIMARY KEY AUTOINCREMENT, greeting TEXT, count INTEGER)&quot;
+);
+db.run(&quot;INSERT INTO foo (greeting, count) VALUES (?, ?)&quot;, &quot;Welcome to bun!&quot;, 2);
+db.run(&quot;INSERT INTO foo (greeting, count) VALUES (?, ?)&quot;, &quot;Hello World!&quot;, 0);
+db.run(
+  &quot;INSERT INTO foo (greeting, count) VALUES (?, ?)&quot;,
+  &quot;Welcome to bun!!!!&quot;,
+  2
+);
+
+// Statement object
+var statement = db.query(&quot;SELECT * FROM foo WHERE count = ?&quot;);
+
+// return the first row as an object, binding 2 to the count parameter
+statement.get(2);
+// =&gt; { id: 1, greeting: &quot;Welcome to bun!&quot;, count: 2 }
+
+// Statement object, but with named parameters
+var statement = db.query(&quot;SELECT * FROM foo WHERE count = $count&quot;);
+
+// return the first row as an object, binding 2 to the count parameter
+statement.get({ $count: 2 });
+// =&gt; { id: 1, greeting: &quot;Welcome to bun!&quot;, count: 2 }
+</code></pre>
+<p>Internally, this calls <a href="https://www.sqlite.org/capi3ref.html#sqlite3_reset"><code>sqlite3_reset</code></a> and calls <a href="https://www.sqlite.org/capi3ref.html#sqlite3_step"><code>sqlite3_step</code></a> once. Stepping through all the rows is not necessary when you only want the first row.</p>
+<h4 id="statementrun"><a class="header" href="#statementrun">Statement.run</a></h4>
+<p>Calling <code>run()</code> on a <code>Statement</code> instance runs the query and returns nothing.</p>
+<p>This is useful if you want to repeatedly run a query, but don't care about the results.</p>
+<pre><code class="language-ts">import { Database } from &quot;bun:sqlite&quot;;
+
+// setup
+var db = new Database();
+db.run(
+  &quot;CREATE TABLE foo (id INTEGER PRIMARY KEY AUTOINCREMENT, greeting TEXT, count INTEGER)&quot;
+);
+db.run(&quot;INSERT INTO foo (greeting, count) VALUES (?, ?)&quot;, &quot;Welcome to bun!&quot;, 2);
+db.run(&quot;INSERT INTO foo (greeting, count) VALUES (?, ?)&quot;, &quot;Hello World!&quot;, 0);
+db.run(
+  &quot;INSERT INTO foo (greeting, count) VALUES (?, ?)&quot;,
+  &quot;Welcome to bun!!!!&quot;,
+  2
+);
+
+// Statement object (TODO: use a better example query)
+var statement = db.query(&quot;SELECT * FROM foo&quot;);
+
+// run the query, returning nothing
+statement.run();
+</code></pre>
+<p>Internally, this calls <a href="https://www.sqlite.org/capi3ref.html#sqlite3_reset"><code>sqlite3_reset</code></a> and calls <a href="https://www.sqlite.org/capi3ref.html#sqlite3_step"><code>sqlite3_step</code></a> once. Stepping through all the rows is not necessary when you don't care about the results.</p>
+<h4 id="statementfinalize"><a class="header" href="#statementfinalize">Statement.finalize</a></h4>
+<p>This method finalizes the statement, freeing any resources associated with it.</p>
+<p>After a statement has been finalized, it cannot be used for any further queries. Any attempt to run the statement will throw an error. Calling it multiple times will have no effect.</p>
+<p>It is a good idea to finalize a statement when you are done with it, but the garbage collector will do it for you if you don't.</p>
+<pre><code class="language-ts">import { Database } from &quot;bun:sqlite&quot;;
+
+// setup
+var db = new Database();
+db.run(
+  &quot;CREATE TABLE foo (id INTEGER PRIMARY KEY AUTOINCREMENT, greeting TEXT, count INTEGER)&quot;
+);
+db.run(&quot;INSERT INTO foo (greeting, count) VALUES (?, ?)&quot;, &quot;Welcome to bun!&quot;, 2);
+db.run(&quot;INSERT INTO foo (greeting, count) VALUES (?, ?)&quot;, &quot;Hello World!&quot;, 0);
+db.run(
+  &quot;INSERT INTO foo (greeting, count) VALUES (?, ?)&quot;,
+  &quot;Welcome to bun!!!!&quot;,
+  2
+);
+
+// Statement object
+var statement = db.query(&quot;SELECT * FROM foo WHERE count = ?&quot;);
+
+statement.finalize();
+
+// this will throw
+statement.run();
+</code></pre>
+<h4 id="statementtostring"><a class="header" href="#statementtostring">Statement.toString()</a></h4>
+<p>Calling <code>toString()</code> on a <code>Statement</code> instance prints the expanded SQL query. This is useful for debugging.</p>
+<pre><code class="language-ts">import { Database } from &quot;bun:sqlite&quot;;
+
+// setup
+var db = new Database();
+db.run(
+  &quot;CREATE TABLE foo (id INTEGER PRIMARY KEY AUTOINCREMENT, greeting TEXT, count INTEGER)&quot;
+);
+db.run(&quot;INSERT INTO foo (greeting, count) VALUES (?, ?)&quot;, &quot;Welcome to bun!&quot;, 2);
+db.run(&quot;INSERT INTO foo (greeting, count) VALUES (?, ?)&quot;, &quot;Hello World!&quot;, 0);
+db.run(
+  &quot;INSERT INTO foo (greeting, count) VALUES (?, ?)&quot;,
+  &quot;Welcome to bun!!!!&quot;,
+  2
+);
+
+// Statement object
+const statement = db.query(&quot;SELECT * FROM foo WHERE count = ?&quot;);
+
+console.log(statement.toString());
+// =&gt; &quot;SELECT * FROM foo WHERE count = NULL&quot;
+
+statement.run(2); // bind the param
+
+console.log(statement.toString());
+// =&gt; &quot;SELECT * FROM foo WHERE count = 2&quot;
+</code></pre>
+<p>Internally, this calls <a href="https://www.sqlite.org/capi3ref.html#sqlite3_expanded_sql"><code>sqlite3_expanded_sql</code></a>.</p>
+<h4 id="datatypes"><a class="header" href="#datatypes">Datatypes</a></h4>
+<div class="table-wrapper"><table><thead><tr><th>JavaScript type</th><th>SQLite type</th></tr></thead><tbody>
+<tr><td><code>string</code></td><td><code>TEXT</code></td></tr>
+<tr><td><code>number</code></td><td><code>INTEGER</code> or <code>DECIMAL</code></td></tr>
+<tr><td><code>boolean</code></td><td><code>INTEGER</code> (1 or 0)</td></tr>
+<tr><td><code>Uint8Array</code></td><td><code>BLOB</code></td></tr>
+<tr><td><code>Buffer</code></td><td><code>BLOB</code></td></tr>
+<tr><td><code>bigint</code></td><td><code>INTEGER</code></td></tr>
+<tr><td><code>null</code></td><td><code>NULL</code></td></tr>
+</tbody></table>
+</div>
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="bun_write.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                            <a rel="next" href="ffi/index.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="bun_write.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                    <a rel="next" href="ffi/index.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+        <script type="text/javascript">
+            window.playground_copyable = true;
+        </script>
+        <script src="elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="searcher.js" type="text/javascript" charset="utf-8"></script>
+        <script src="clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+    </body>
+</html>

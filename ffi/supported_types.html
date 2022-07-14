@@ -1,0 +1,424 @@
+<!DOCTYPE HTML>
+<html lang="en" class="sidebar-visible no-js ayu">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Supported Types - Bun Runtime</title>
+        <!-- Custom HTML head -->
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="icon" href="../favicon.svg">
+        <link rel="shortcut icon" href="../favicon.png">
+        <link rel="stylesheet" href="../css/variables.css">
+        <link rel="stylesheet" href="../css/general.css">
+        <link rel="stylesheet" href="../css/chrome.css">
+        <link rel="stylesheet" href="../css/print.css" media="print">
+        <!-- Fonts -->
+        <link rel="stylesheet" href="../FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="../fonts/fonts.css">
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="../highlight.css">
+        <link rel="stylesheet" href="../tomorrow-night.css">
+        <link rel="stylesheet" href="../ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+    </head>
+    <body>
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">
+            var path_to_root = "../";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "ayu";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('ayu')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="../installing.html"><strong aria-hidden="true">1.</strong> Installing</a></li><li class="chapter-item expanded "><a href="../using.html"><strong aria-hidden="true">2.</strong> Using Bun</a></li><li class="chapter-item expanded "><a href="../packagemanager.html"><strong aria-hidden="true">3.</strong> Using bun as a package manager</a></li><li class="chapter-item expanded "><a href="../taskrunner.html"><strong aria-hidden="true">4.</strong> Using bun as a task runner</a></li><li class="chapter-item expanded "><a href="../examples.html"><strong aria-hidden="true">5.</strong> Examples</a></li><li class="chapter-item expanded "><a href="../limitations.html"><strong aria-hidden="true">6.</strong> Limitations</a></li><li class="chapter-item expanded "><a href="../configuration.html"><strong aria-hidden="true">7.</strong> Configuration</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../loaders.html"><strong aria-hidden="true">7.1.</strong> Loaders</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../css.html"><strong aria-hidden="true">7.1.1.</strong> css</a></li></ol></li></ol></li><li class="chapter-item expanded "><a href="../frameworks.html"><strong aria-hidden="true">8.</strong> frameworks</a></li><li class="chapter-item expanded "><a href="../troubleshooting.html"><strong aria-hidden="true">9.</strong> troubleshooting</a></li><li class="chapter-item expanded "><a href="../reference.html"><strong aria-hidden="true">10.</strong> Reference</a></li><li class="chapter-item expanded "><a href="../bun_serve.html"><strong aria-hidden="true">11.</strong> Bun Serve</a></li><li class="chapter-item expanded "><a href="../bun_write.html"><strong aria-hidden="true">12.</strong> Bun Write</a></li><li class="chapter-item expanded "><a href="../bun_sqlite.html"><strong aria-hidden="true">13.</strong> bun:sqlite</a></li><li class="chapter-item expanded "><a href="../ffi/index.html"><strong aria-hidden="true">14.</strong> bun:ffi</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="../ffi/low_overhead.html"><strong aria-hidden="true">14.1.</strong> Low Overhead FFI</a></li><li class="chapter-item expanded "><a href="../ffi/usage.html"><strong aria-hidden="true">14.2.</strong> Usage</a></li><li class="chapter-item expanded "><a href="../ffi/supported_types.html" class="active"><strong aria-hidden="true">14.3.</strong> Supported Types</a></li></ol></li><li class="chapter-item expanded "><a href="../enviromentvariables.html"><strong aria-hidden="true">15.</strong> Environment variables</a></li><li class="chapter-item expanded "><a href="../transpiler.html"><strong aria-hidden="true">16.</strong> Transpiler</a></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu (default)</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Bun Runtime</h1>
+
+                    <div class="right-buttons">
+                        <a href="../print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h4 id="supported-ffi-types-ffitype"><a class="header" href="#supported-ffi-types-ffitype">Supported FFI types (<code>FFIType</code>)</a></h4>
+<div class="table-wrapper"><table><thead><tr><th><code>FFIType</code></th><th>C Type</th><th>Aliases</th></tr></thead><tbody>
+<tr><td>cstring</td><td><code>char*</code></td><td></td></tr>
+<tr><td>ptr</td><td><code>void*</code></td><td><code>pointer</code>, <code>void*</code>, <code>char*</code></td></tr>
+<tr><td>i8</td><td><code>int8_t</code></td><td><code>int8_t</code></td></tr>
+<tr><td>i16</td><td><code>int16_t</code></td><td><code>int16_t</code></td></tr>
+<tr><td>i32</td><td><code>int32_t</code></td><td><code>int32_t</code>, <code>int</code></td></tr>
+<tr><td>i64</td><td><code>int64_t</code></td><td><code>int32_t</code></td></tr>
+<tr><td>u8</td><td><code>uint8_t</code></td><td><code>uint8_t</code></td></tr>
+<tr><td>u16</td><td><code>uint16_t</code></td><td><code>uint16_t</code></td></tr>
+<tr><td>u32</td><td><code>uint32_t</code></td><td><code>uint32_t</code></td></tr>
+<tr><td>u64</td><td><code>uint64_t</code></td><td><code>uint32_t</code></td></tr>
+<tr><td>f32</td><td><code>float</code></td><td><code>float</code></td></tr>
+<tr><td>f64</td><td><code>double</code></td><td><code>double</code></td></tr>
+<tr><td>bool</td><td><code>bool</code></td><td></td></tr>
+<tr><td>char</td><td><code>char</code></td><td></td></tr>
+</tbody></table>
+</div>
+<h4 id="strings-cstring"><a class="header" href="#strings-cstring">Strings (<code>CString</code>)</a></h4>
+<p>JavaScript strings and C-like strings are different, and that complicates using strings with native libraries.</p>
+<details>
+<summary>How are JavaScript strings and C strings different?</summary>
+<p>JavaScript strings:</p>
+<ul>
+<li>UTF16 (2 bytes per letter) or potentially latin1, depending on the JavaScript engine &amp; what characters are used</li>
+<li><code>length</code> stored separately</li>
+<li>Immutable</li>
+</ul>
+<p>C strings:</p>
+<ul>
+<li>UTF8 (1 byte per letter), usually</li>
+<li>The length is not stored. Instead, the string is null-terminated which means the length is the index of the first <code>\0</code> it finds</li>
+<li>Mutable</li>
+</ul>
+</details>
+<p>To help with that, <code>bun:ffi</code> exports <code>CString</code> which extends JavaScript's built-in <code>String</code> to support null-terminated strings and add a few extras:</p>
+<pre><code class="language-ts">class CString extends String {
+  /**
+   * Given a `ptr`, this will automatically search for the closing `\0` character and transcode from UTF-8 to UTF-16 if necessary.
+   */
+  constructor(ptr: number, byteOffset?: number, byteLength?: number): string;
+
+  /**
+   * The ptr to the C string
+   *
+   * This `CString` instance is a clone of the string, so it
+   * is safe to continue using this instance after the `ptr` has been
+   * freed.
+   */
+  ptr: number;
+  byteOffset?: number;
+  byteLength?: number;
+}
+</code></pre>
+<p>To convert from a null-terminated string pointer to a JavaScript string:</p>
+<pre><code class="language-ts">const myString = new CString(ptr);
+</code></pre>
+<p>To convert from a pointer with a known length to a JavaScript string:</p>
+<pre><code class="language-ts">const myString = new CString(ptr, 0, byteLength);
+</code></pre>
+<p><code>new CString</code> clones the C string, so it is safe to continue using <code>myString</code> after <code>ptr</code> has been freed.</p>
+<pre><code class="language-ts">my_library_free(myString.ptr);
+
+// this is safe because myString is a clone
+console.log(myString);
+</code></pre>
+<h5 id="returning-a-string"><a class="header" href="#returning-a-string">Returning a string</a></h5>
+<p>When used in <code>returns</code>, <code>FFIType.cstring</code> coerces the pointer to a JavaScript <code>string</code>. When used in <code>args</code>, <code>cstring</code> is identical to <code>ptr</code>.</p>
+<h4 id="function-pointers-cfunction"><a class="header" href="#function-pointers-cfunction">Function pointers (<code>CFunction</code>)</a></h4>
+<p>To call a function pointer from JavaScript, use <code>CFunction</code></p>
+<p>This is useful if using Node-API (napi) with Bun, and you've already loaded some symbols.</p>
+<pre><code class="language-ts">import { CFunction } from &quot;bun:ffi&quot;;
+
+var myNativeLibraryGetVersion = /* somehow, you got this pointer */
+
+const getVersion = new CFunction({
+  returns: &quot;cstring&quot;,
+  args: [],
+  ptr: myNativeLibraryGetVersion,
+});
+getVersion();
+</code></pre>
+<p>If you have multiple function pointers, you can define them all at once with <code>linkSymbols</code>:</p>
+<pre><code class="language-ts">import { linkSymbols } from &quot;bun:ffi&quot;;
+
+// getVersionPtrs defined elsewhere
+const [majorPtr, minorPtr, patchPtr] = getVersionPtrs();
+
+const lib = linkSymbols({
+  // Unlike with dlopen(), the names here can be whatever you want
+  getMajor: {
+    returns: &quot;cstring&quot;,
+    args: [],
+
+    // Since this doesn't use dlsym(), you have to provide a valid ptr
+    // That ptr could be a number or a bigint
+    // An invalid pointer will crash your program.
+    ptr: majorPtr,
+  },
+  getMinor: {
+    returns: &quot;cstring&quot;,
+    args: [],
+    ptr: minorPtr,
+  },
+  getPatch: {
+    returns: &quot;cstring&quot;,
+    args: [],
+    ptr: patchPtr,
+  },
+});
+
+const [major, minor, patch] = [
+  lib.symbols.getMajor(),
+  lib.symbols.getMinor(),
+  lib.symbols.getPatch(),
+];
+</code></pre>
+<h4 id="pointers"><a class="header" href="#pointers">Pointers</a></h4>
+<p>Bun represents <a href="https://en.wikipedia.org/wiki/Pointer_(computer_programming)">pointers</a> as a <code>number</code> in JavaScript.</p>
+<details>
+<summary>How does a 64 bit pointer fit in a JavaScript number?</summary>
+<p>64-bit processors support up to <a href="https://en.wikipedia.org/wiki/64-bit_computing#Limits_of_processors">52 bits of addressable space</a>.</p>
+<p><a href="https://en.wikipedia.org/wiki/Double-precision_floating-point_format#IEEE_754_double-precision_binary_floating-point_format:_binary64">JavaScript numbers</a> support 53 bits of usable space, so that leaves us with about 11 bits of extra space.</p>
+<p>Why not <code>BigInt</code>?</p>
+<p><code>BigInt</code> is slower. JavaScript engines allocate a separate <code>BigInt</code> which means they can't just fit in a regular javascript value.</p>
+<p>If you pass a <code>BigInt</code> to a function, it will be converted to a <code>number</code></p>
+</details>
+<p><strong>To convert from a TypedArray to a pointer</strong>:</p>
+<pre><code class="language-ts">import { ptr } from &quot;bun:ffi&quot;;
+var myTypedArray = new Uint8Array(32);
+const myPtr = ptr(myTypedArray);
+</code></pre>
+<p><strong>To convert from a pointer to an ArrayBuffer</strong>:</p>
+<pre><code class="language-ts">import { ptr, toArrayBuffer } from &quot;bun:ffi&quot;;
+var myTypedArray = new Uint8Array(32);
+const myPtr = ptr(myTypedArray);
+
+// toTypedArray accepts a `byteOffset` and `byteLength`
+// if `byteLength` is not provided, it is assumed to be a null-terminated pointer
+myTypedArray = new Uint8Array(toArrayBuffer(myPtr, 0, 32), 0, 32);
+</code></pre>
+<p><strong>Pointers &amp; memory safety</strong></p>
+<p>Using raw pointers outside of FFI is extremely not recommended.</p>
+<p>A future version of bun may add a CLI flag to disable <code>bun:ffi</code> (or potentially a separate build of bun).</p>
+<p><strong>Pointer alignment</strong></p>
+<p>If an API expects a pointer sized to something other than <code>char</code> or <code>u8</code>, make sure the typed array is also that size.</p>
+<p>A <code>u64*</code> is not exactly the same as <code>[8]u8*</code> due to alignment</p>
+<h5 id="passing-a-pointer"><a class="header" href="#passing-a-pointer">Passing a pointer</a></h5>
+<p>Where FFI functions expect a pointer, pass a TypedArray of equivalent size</p>
+<p>Easymode:</p>
+<pre><code class="language-ts">import { dlopen, FFIType } from &quot;bun:ffi&quot;;
+
+const {
+  symbols: { encode_png },
+} = dlopen(myLibraryPath, {
+  encode_png: {
+    // FFIType's can be specified as strings too
+    args: [&quot;ptr&quot;, &quot;u32&quot;, &quot;u32&quot;],
+    returns: FFIType.ptr,
+  },
+});
+
+const pixels = new Uint8ClampedArray(128 * 128 * 4);
+pixels.fill(254);
+pixels.subarray(0, 32 * 32 * 2).fill(0);
+
+const out = encode_png(
+  // pixels will be passed as a pointer
+  pixels,
+
+  128,
+  128
+);
+</code></pre>
+<p>The <a href="https://github.com/oven-sh/bun/blob/c6d732eee2721cd6191672cbe2c57fb17c3fffe4/src/bun.js/ffi.exports.js#L146-L148">auto-generated wrapper</a> converts the pointer to a TypedArray</p>
+<details>
+<summary>Hardmode</summary>
+<p>If you don't want the automatic conversion or you want a pointer to a specific byte offset within the TypedArray, you can also directly get the pointer to the TypedArray:</p>
+<pre><code class="language-ts">import { dlopen, FFIType, ptr } from &quot;bun:ffi&quot;;
+
+const {
+  symbols: { encode_png },
+} = dlopen(myLibraryPath, {
+  encode_png: {
+    // FFIType's can be specified as strings too
+    args: [&quot;ptr&quot;, &quot;u32&quot;, &quot;u32&quot;],
+    returns: FFIType.ptr,
+  },
+});
+
+const pixels = new Uint8ClampedArray(128 * 128 * 4);
+pixels.fill(254);
+
+// this returns a number! not a BigInt!
+const myPtr = ptr(pixels);
+
+const out = encode_png(
+  myPtr,
+
+  // dimensions:
+  128,
+  128
+);
+</code></pre>
+</details>
+<h5 id="reading-pointers"><a class="header" href="#reading-pointers">Reading pointers</a></h5>
+<pre><code class="language-ts">const out = encode_png(
+  // pixels will be passed as a pointer
+  pixels,
+
+  // dimensions:
+  128,
+  128
+);
+
+// assuming it is 0-terminated, it can be read like this:
+var png = new Uint8Array(toArrayBuffer(out));
+
+// save it to disk:
+await Bun.write(&quot;out.png&quot;, png);
+</code></pre>
+<h5 id="not-implemented-yet"><a class="header" href="#not-implemented-yet">Not implemented yet</a></h5>
+<p><code>bun:ffi</code> has a few more things planned but not implemented yet:</p>
+<ul>
+<li>callback functions</li>
+<li>async functions</li>
+</ul>
+<h3 id="node-api-napi"><a class="header" href="#node-api-napi">Node-API (napi)</a></h3>
+<p>Bun.js implements 90% of the APIs available in <a href="https://nodejs.org/api/n-api.html">Node-API</a> (napi).</p>
+<p>You can see the status of <a href="https://github.com/oven-sh/bun/issues/158">this here</a>.</p>
+<p>Loading Node-API modules in Bun.js works the same as in Node.js:</p>
+<pre><code class="language-js">const napi = require(&quot;./my-node-module.node&quot;);
+</code></pre>
+<p>You can also use <code>process.dlopen</code>:</p>
+<pre><code class="language-js">var mod = { exports: {} };
+process.dlopen(mod, &quot;./my-node-module.node&quot;);
+</code></pre>
+<p>As part of that work, Bun.js also polyfills the <a href="https://npmjs.com/package/detect-libc"><code>detect-libc</code></a> package, which is used by many Node-API modules to detect which <code>.node</code> binding to <code>require</code>.</p>
+<p>This implementation of Node-API is from scratch. It doesn't use any code from Node.js.</p>
+<p><strong>Some implementation details</strong></p>
+<p>When requiring a <code>*.node</code> module, Bun's JavaScript transpiler transforms the <code>require</code> expression into a call to <code>import.meta.require</code>:</p>
+<pre><code class="language-js">// this is the input
+require(&quot;./my-node-module.node&quot;);
+
+// this is the output
+import.meta.require(&quot;./my-node-module.node&quot;);
+</code></pre>
+<p>Bun doesn't currently support dynamic requires, but <code>import.meta.require</code> is an escape hatch for that. It uses a <a href="https://github.com/oven-sh/bun/blob/aa87d40f4b7fdfb52575f44d151906ddba6a82d0/src/bun.js/bindings/builtins/js/JSZigGlobalObject.js#L26">JavaScriptCore built-in function</a>.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="../ffi/usage.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                            <a rel="next" href="../enviromentvariables.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="../ffi/usage.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                    <a rel="next" href="../enviromentvariables.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+        <script type="text/javascript">
+            window.playground_copyable = true;
+        </script>
+        <script src="../elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../searcher.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="../book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+    </body>
+</html>

@@ -1,0 +1,311 @@
+<!DOCTYPE HTML>
+<html lang="en" class="sidebar-visible no-js ayu">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Examples - Bun Runtime</title>
+        <!-- Custom HTML head -->
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+    </head>
+    <body>
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">
+            var path_to_root = "";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "ayu";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('ayu')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="installing.html"><strong aria-hidden="true">1.</strong> Installing</a></li><li class="chapter-item expanded "><a href="using.html"><strong aria-hidden="true">2.</strong> Using Bun</a></li><li class="chapter-item expanded "><a href="packagemanager.html"><strong aria-hidden="true">3.</strong> Using bun as a package manager</a></li><li class="chapter-item expanded "><a href="taskrunner.html"><strong aria-hidden="true">4.</strong> Using bun as a task runner</a></li><li class="chapter-item expanded "><a href="examples.html" class="active"><strong aria-hidden="true">5.</strong> Examples</a></li><li class="chapter-item expanded "><a href="limitations.html"><strong aria-hidden="true">6.</strong> Limitations</a></li><li class="chapter-item expanded "><a href="configuration.html"><strong aria-hidden="true">7.</strong> Configuration</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="loaders.html"><strong aria-hidden="true">7.1.</strong> Loaders</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="css.html"><strong aria-hidden="true">7.1.1.</strong> css</a></li></ol></li></ol></li><li class="chapter-item expanded "><a href="frameworks.html"><strong aria-hidden="true">8.</strong> frameworks</a></li><li class="chapter-item expanded "><a href="troubleshooting.html"><strong aria-hidden="true">9.</strong> troubleshooting</a></li><li class="chapter-item expanded "><a href="reference.html"><strong aria-hidden="true">10.</strong> Reference</a></li><li class="chapter-item expanded "><a href="bun_serve.html"><strong aria-hidden="true">11.</strong> Bun Serve</a></li><li class="chapter-item expanded "><a href="bun_write.html"><strong aria-hidden="true">12.</strong> Bun Write</a></li><li class="chapter-item expanded "><a href="bun_sqlite.html"><strong aria-hidden="true">13.</strong> bun:sqlite</a></li><li class="chapter-item expanded "><a href="ffi/index.html"><strong aria-hidden="true">14.</strong> bun:ffi</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="ffi/low_overhead.html"><strong aria-hidden="true">14.1.</strong> Low Overhead FFI</a></li><li class="chapter-item expanded "><a href="ffi/usage.html"><strong aria-hidden="true">14.2.</strong> Usage</a></li><li class="chapter-item expanded "><a href="ffi/supported_types.html"><strong aria-hidden="true">14.3.</strong> Supported Types</a></li></ol></li><li class="chapter-item expanded "><a href="enviromentvariables.html"><strong aria-hidden="true">15.</strong> Environment variables</a></li><li class="chapter-item expanded "><a href="transpiler.html"><strong aria-hidden="true">16.</strong> Transpiler</a></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu (default)</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Bun Runtime</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h2 id="creating-a-discord-bot-with-bun"><a class="header" href="#creating-a-discord-bot-with-bun">Creating a Discord bot with Bun</a></h2>
+<h3 id="application-commands"><a class="header" href="#application-commands">Application Commands</a></h3>
+<blockquote>
+<p>Application commands are native ways to interact with apps in the Discord client. There are 3 types of commands accessible in different interfaces: the chat input, a message's context menu (top-right menu or right-clicking in a message), and a user's context menu (right-clicking on a user).</p>
+</blockquote>
+<p>To get started you can use the interactions template:</p>
+<pre><code class="language-bash">bun create discord-interactions my-interactions-bot
+cd my-interactions-bot
+</code></pre>
+<p>If you don't have a Discord bot/application yet, you can create one <a href="https://discord.com/developers/applications/me">here (https://discord.com/developers/applications/me)</a>.</p>
+<p>Invite bot to your server by visiting <code>https://discord.com/api/oauth2/authorize?client_id=&lt;your_application_id&gt;&amp;scope=bot%20applications.commands</code></p>
+<p>Afterwards you will need to get your bot's token, public key, and application id from the application page and put them into <code>.env.example</code> file</p>
+<p>Then you can run the http server that will handle your interactions:</p>
+<pre><code class="language-bash">bun install
+mv .env.example .env
+
+bun run.js # listening on port 1337
+</code></pre>
+<p>Discord does not accept an insecure HTTP server, so you will need to provide an SSL certificate or put the interactions server behind a secure reverse proxy. For development, you can use ngrok/cloudflare tunnel to expose local ports as secure URL.</p>
+<h2 id="using-bun-with-nextjs"><a class="header" href="#using-bun-with-nextjs">Using bun with Next.js</a></h2>
+<p>To create a new Next.js app with bun:</p>
+<pre><code class="language-bash">bun create next ./app
+cd app
+bun dev # start dev server
+</code></pre>
+<p>To use an existing Next.js app with bun:</p>
+<pre><code class="language-bash">bun add bun-framework-next
+echo &quot;framework = 'next'&quot; &gt; bunfig.toml
+bun bun # bundle dependencies
+bun dev # start dev server
+</code></pre>
+<p>Many of Next.js’ features are supported, but not all.</p>
+<p>Here’s what doesn’t work yet:</p>
+<ul>
+<li><code>getStaticPaths</code></li>
+<li>same-origin <code>fetch</code> inside of <code>getStaticProps</code> or <code>getServerSideProps</code></li>
+<li>locales, zones, <code>assetPrefix</code> (workaround: change <code>--origin \&quot;http://localhost:3000/assetPrefixInhere\&quot;</code>)</li>
+<li><code>next/image</code> is polyfilled to a regular <code>&lt;img src&gt;</code> tag.</li>
+<li><code>proxy</code> and anything else in <code>next.config.js</code></li>
+<li>API routes, middleware (middleware is easier to support, though! Similar SSR API)</li>
+<li>styled-jsx (technically not Next.js, but often used with it)</li>
+<li>React Server Components</li>
+</ul>
+<p>When using Next.js, bun automatically reads configuration from <code>.env.local</code>, <code>.env.development</code> and <code>.env</code> (in that order). <code>process.env.NEXT_PUBLIC_</code> and <code>process.env.NEXT_</code> automatically are replaced via <code>--define</code>.</p>
+<p>Currently, any time you import new dependencies from <code>node_modules</code>, you will need to re-run <code>bun bun --use next</code>. This will eventually be automatic.</p>
+<h2 id="using-bun-with-single-page-apps"><a class="header" href="#using-bun-with-single-page-apps">Using bun with single-page apps</a></h2>
+<p>In your project folder root (where <code>package.json</code> is):</p>
+<pre><code class="language-bash">bun bun ./entry-point-1.js ./entry-point-2.jsx
+bun
+</code></pre>
+<p>By default, <code>bun</code> will look for any HTML files in the <code>public</code> directory and serve that. For browsers navigating to the page, the <code>.html</code> file extension is optional in the URL, and <code>index.html</code> will automatically rewrite for the directory.</p>
+<p>Here are examples of routing from <code>public/</code> and how they’re matched:
+| Dev Server URL | File Path |
+|----------------|-----------|
+| /dir | public/dir/index.html |
+| / | public/index.html |
+| /index | public/index.html |
+| /hi | public/hi.html |
+| /file | public/file.html |
+| /font/Inter.woff2 | public/font/Inter.woff2 |
+| /hello | public/index.html |</p>
+<p>If <code>public/index.html</code> exists, it becomes the default page instead of a 404 page, unless that pathname has a file extension.</p>
+<h3 id="using-bun-with-create-react-app"><a class="header" href="#using-bun-with-create-react-app">Using bun with Create React App</a></h3>
+<p>To create a new React app:</p>
+<pre><code class="language-bash">bun create react ./app
+cd app
+bun dev # start dev server
+</code></pre>
+<p>To use an existing React app:</p>
+<pre><code class="language-bash"># To enable React Fast Refresh, ensure it is installed
+bun add -d react-refresh
+
+# Generate a bundle for your entry point(s)
+bun bun ./src/index.js # jsx, tsx, ts also work. can be multiple files
+
+# Start the dev server
+bun dev
+</code></pre>
+<p>From there, bun relies on the filesystem for mapping dev server paths to source files. All URL paths are relative to the project root (where <code>package.json</code> is located).</p>
+<p>Here are examples of routing source code file paths:</p>
+<div class="table-wrapper"><table><thead><tr><th>Dev Server URL</th><th>File Path (relative to cwd)</th></tr></thead><tbody>
+<tr><td>/src/components/Button.tsx</td><td>src/components/Button.tsx</td></tr>
+<tr><td>/src/index.tsx</td><td>src/index.tsx</td></tr>
+<tr><td>/pages/index.js</td><td>pages/index.js</td></tr>
+</tbody></table>
+</div>
+<p>You do not need to include file extensions in <code>import</code> paths. CommonJS-style import paths without the file extension work.</p>
+<p>You can override the public directory by passing <code>--public-dir=&quot;path-to-folder&quot;</code>.</p>
+<p>If no directory is specified and <code>./public/</code> doesn’t exist, bun will try <code>./static/</code>. If <code>./static/</code> does not exist, but won’t serve from a public directory. If you pass <code>--public-dir=./</code> bun will serve from the current directory, but it will check the current directory last instead of first.</p>
+<h2 id="using-bun-with-typescript"><a class="header" href="#using-bun-with-typescript">Using bun with TypeScript</a></h2>
+<h3 id="transpiling-typescript-with-bun"><a class="header" href="#transpiling-typescript-with-bun">Transpiling TypeScript with Bun</a></h3>
+<p>TypeScript just works. There’s nothing to configure and nothing extra to install. If you import a <code>.ts</code> or <code>.tsx</code> file, bun will transpile it into JavaScript. bun also transpiles <code>node_modules</code> containing <code>.ts</code> or <code>.tsx</code> files. This is powered by bun’s TypeScript transpiler, so it’s fast.</p>
+<p>bun also reads <code>tsconfig.json</code>, including <code>baseUrl</code> and <code>paths</code>.</p>
+<h3 id="adding-type-definitions"><a class="header" href="#adding-type-definitions">Adding Type Definitions</a></h3>
+<p>To get TypeScript working with the global API, add <code>bun-types</code> to your project:</p>
+<pre><code class="language-sh">bun add -d bun-types
+</code></pre>
+<p>And to the <code>types</code> field in your <code>tsconfig.json</code>:</p>
+<pre><code class="language-json">{
+  &quot;compilerOptions&quot;: {
+    &quot;types&quot;: [&quot;bun-types&quot;]
+  }
+}
+</code></pre>
+<h2 id="not-implemented-yet"><a class="header" href="#not-implemented-yet">Not implemented yet</a></h2>
+<p>bun is a project with an incredibly large scope and is still in its early days.</p>
+<p>You can see <a href="https://github.com/oven-sh/bun/issues/159">Bun's Roadmap</a>, but here are some additional things that are planned:</p>
+<div class="table-wrapper"><table><thead><tr><th>Feature</th><th>In</th></tr></thead><tbody>
+<tr><td>Web Streams with Fetch API</td><td>bun.js</td></tr>
+<tr><td>Web Streams with HTMLRewriter</td><td>bun.js</td></tr>
+<tr><td>WebSocket Server</td><td>bun.js</td></tr>
+<tr><td>Package hoisting that matches npm behavior</td><td>bun install</td></tr>
+<tr><td>Source Maps (unbundled is supported)</td><td>JS Bundler</td></tr>
+<tr><td>Source Maps</td><td>CSS</td></tr>
+<tr><td>JavaScript Minifier</td><td>JS Transpiler</td></tr>
+<tr><td>CSS Minifier</td><td>CSS</td></tr>
+<tr><td>CSS Parser (it only bundles)</td><td>CSS</td></tr>
+<tr><td>Tree-shaking</td><td>JavaScript</td></tr>
+<tr><td>Tree-shaking</td><td>CSS</td></tr>
+<tr><td><a href="https://www.typescriptlang.org/tsconfig#extends"><code>extends</code></a> in tsconfig.json</td><td>TS Transpiler</td></tr>
+<tr><td><a href="https://www.typescriptlang.org/docs/handbook/decorators.html">TypeScript Decorators</a></td><td>TS Transpiler</td></tr>
+<tr><td><code>@jsxPragma</code> comments</td><td>JS Transpiler</td></tr>
+<tr><td>Sharing <code>.bun</code> files</td><td>bun</td></tr>
+<tr><td>Dates &amp; timestamps</td><td>TOML parser</td></tr>
+<tr><td><a href="https://github.com/oven-sh/bun/issues/18">Hash components for Fast Refresh</a></td><td>JSX Transpiler</td></tr>
+</tbody></table>
+</div><small>
+JS Transpiler == JavaScript Transpiler
+<br/>
+TS Transpiler == TypeScript Transpiler
+<br/>
+Package manager == <code>bun install</code>
+<br/>
+bun.js == bun’s JavaScriptCore integration that executes JavaScript. Similar to how Node.js & Deno embed V8.
+</small>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="taskrunner.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                            <a rel="next" href="limitations.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="taskrunner.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                    <a rel="next" href="limitations.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+        <script type="text/javascript">
+            window.playground_copyable = true;
+        </script>
+        <script src="elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="searcher.js" type="text/javascript" charset="utf-8"></script>
+        <script src="clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+    </body>
+</html>

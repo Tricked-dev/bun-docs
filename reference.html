@@ -1,0 +1,669 @@
+<!DOCTYPE HTML>
+<html lang="en" class="sidebar-visible no-js ayu">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Reference - Bun Runtime</title>
+        <!-- Custom HTML head -->
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+    </head>
+    <body>
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">
+            var path_to_root = "";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "ayu";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('ayu')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="installing.html"><strong aria-hidden="true">1.</strong> Installing</a></li><li class="chapter-item expanded "><a href="using.html"><strong aria-hidden="true">2.</strong> Using Bun</a></li><li class="chapter-item expanded "><a href="packagemanager.html"><strong aria-hidden="true">3.</strong> Using bun as a package manager</a></li><li class="chapter-item expanded "><a href="taskrunner.html"><strong aria-hidden="true">4.</strong> Using bun as a task runner</a></li><li class="chapter-item expanded "><a href="examples.html"><strong aria-hidden="true">5.</strong> Examples</a></li><li class="chapter-item expanded "><a href="limitations.html"><strong aria-hidden="true">6.</strong> Limitations</a></li><li class="chapter-item expanded "><a href="configuration.html"><strong aria-hidden="true">7.</strong> Configuration</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="loaders.html"><strong aria-hidden="true">7.1.</strong> Loaders</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="css.html"><strong aria-hidden="true">7.1.1.</strong> css</a></li></ol></li></ol></li><li class="chapter-item expanded "><a href="frameworks.html"><strong aria-hidden="true">8.</strong> frameworks</a></li><li class="chapter-item expanded "><a href="troubleshooting.html"><strong aria-hidden="true">9.</strong> troubleshooting</a></li><li class="chapter-item expanded "><a href="reference.html" class="active"><strong aria-hidden="true">10.</strong> Reference</a></li><li class="chapter-item expanded "><a href="bun_serve.html"><strong aria-hidden="true">11.</strong> Bun Serve</a></li><li class="chapter-item expanded "><a href="bun_write.html"><strong aria-hidden="true">12.</strong> Bun Write</a></li><li class="chapter-item expanded "><a href="bun_sqlite.html"><strong aria-hidden="true">13.</strong> bun:sqlite</a></li><li class="chapter-item expanded "><a href="ffi/index.html"><strong aria-hidden="true">14.</strong> bun:ffi</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="ffi/low_overhead.html"><strong aria-hidden="true">14.1.</strong> Low Overhead FFI</a></li><li class="chapter-item expanded "><a href="ffi/usage.html"><strong aria-hidden="true">14.2.</strong> Usage</a></li><li class="chapter-item expanded "><a href="ffi/supported_types.html"><strong aria-hidden="true">14.3.</strong> Supported Types</a></li></ol></li><li class="chapter-item expanded "><a href="enviromentvariables.html"><strong aria-hidden="true">15.</strong> Environment variables</a></li><li class="chapter-item expanded "><a href="transpiler.html"><strong aria-hidden="true">16.</strong> Transpiler</a></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu (default)</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Bun Runtime</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h2 id="reference"><a class="header" href="#reference">Reference</a></h2>
+<h3 id="bun-install"><a class="header" href="#bun-install"><code>bun install</code></a></h3>
+<p>bun install is a fast package manager &amp; npm client.</p>
+<p>bun install can be configured via <code>bunfig.toml</code>, environment variables, and CLI flags.</p>
+<h4 id="configuring-bun-install-with-bunfigtoml"><a class="header" href="#configuring-bun-install-with-bunfigtoml">Configuring bun install with <code>bunfig.toml</code></a></h4>
+<p><code>bunfig.toml</code> is searched for in the following paths on <code>bun install</code>, <code>bun remove</code>, and <code>bun add</code>:</p>
+<ol>
+<li><code>$XDG_CONFIG_HOME/.bunfig.toml</code> or <code>$HOME/.bunfig.toml</code></li>
+<li><code>./bunfig.toml</code></li>
+</ol>
+<p><sup>If both are found, the results are merged together.</sup></p>
+<p>Configuring with <code>bunfig.toml</code> is optional. bun tries to be zero configuration in general, but that's not always possible.</p>
+<pre><code class="language-toml"># Using scoped packages with bun install
+[install.scopes]
+
+# Scope name      The value can be a URL string or an object
+&quot;@mybigcompany&quot; = { token = &quot;123456&quot;, url = &quot;https://registry.mybigcompany.com&quot; }
+# URL is optional and fallsback to the default registry
+
+# The &quot;@&quot; in the scope is optional
+mybigcompany2 = { token = &quot;123456&quot; }
+
+# Environment variables can be referenced as a string that starts with $ and it will be replaced
+mybigcompany3 = { token = &quot;$npm_config_token&quot; }
+
+# Setting username and password turns it into a Basic Auth header by taking base64(&quot;username:password&quot;)
+mybigcompany4 = { username = &quot;myusername&quot;, password = &quot;$npm_config_password&quot;, url = &quot;https://registry.yarnpkg.com/&quot; }
+# You can set username and password in the registry URL. This is the same as above.
+mybigcompany5 = &quot;https://username:password@registry.yarnpkg.com/&quot;
+
+# You can set a token for a registry URL:
+mybigcompany6 = &quot;https://:$NPM_CONFIG_TOKEN@registry.yarnpkg.com/&quot;
+
+[install]
+# Default registry
+# can be a URL string or an object
+registry = &quot;https://registry.yarnpkg.com/&quot;
+# as an object
+#registry = { url = &quot;https://registry.yarnpkg.com/&quot;, token = &quot;123456&quot; }
+
+# Install for production? This is the equivalent to the &quot;--production&quot; CLI argument
+production = false
+
+# Don't actually install
+dryRun = true
+
+# Install optionalDependencies (default: true)
+optional = true
+
+# Install local devDependencies (default: true)
+dev = true
+
+# Install peerDependencies (default: false)
+peer = false
+
+# When using `bun install -g`, install packages here
+globalDir = &quot;~/.bun/install/global&quot;
+
+# When using `bun install -g`, link package bins here
+globalBinDir = &quot;~/.bun/bin&quot;
+
+# cache-related configuration
+[install.cache]
+# The directory to use for the cache
+dir = &quot;~/.bun/install/cache&quot;
+
+# Don't load from the global cache.
+# Note: bun may still write to node_modules/.cache
+disable = false
+
+# Always resolve the latest versions from the registry
+disableManifest = false
+
+
+# Lockfile-related configuration
+[install.lockfile]
+
+# Print a yarn v1 lockfile
+# Note: it does not load the lockfile, it just converts bun.lockb into a yarn.lock
+print = &quot;yarn&quot;
+
+# Path to read bun.lockb from
+path = &quot;bun.lockb&quot;
+
+# Path to save bun.lockb to
+savePath = &quot;bun.lockb&quot;
+
+# Save the lockfile to disk
+save = true
+
+</code></pre>
+<p>If it's easier to read as TypeScript types:</p>
+<pre><code class="language-ts">export interface Root {
+  install: Install;
+}
+
+export interface Install {
+  scopes: Scopes;
+  registry: Registry;
+  production: boolean;
+  dryRun: boolean;
+  optional: boolean;
+  dev: boolean;
+  peer: boolean;
+  globalDir: string;
+  globalBinDir: string;
+  cache: Cache;
+  lockfile: Lockfile;
+  logLevel: &quot;debug&quot; | &quot;error&quot; | &quot;warn&quot;;
+}
+
+type Registry =
+  | string
+  | {
+      url?: string;
+      token?: string;
+      username?: string;
+      password?: string;
+    };
+
+type Scopes = Record&lt;string, Registry&gt;;
+
+export interface Cache {
+  dir: string;
+  disable: boolean;
+  disableManifest: boolean;
+}
+
+export interface Lockfile {
+  print?: &quot;yarn&quot;;
+  path: string;
+  savePath: string;
+  save: boolean;
+}
+</code></pre>
+<h4 id="configuring-with-environment-variables"><a class="header" href="#configuring-with-environment-variables">Configuring with environment variables</a></h4>
+<p>Environment variables have a higher priority than <code>bunfig.toml</code>.</p>
+<div class="table-wrapper"><table><thead><tr><th>Name</th><th>Description</th></tr></thead><tbody>
+<tr><td>BUN_CONFIG_REGISTRY</td><td>Set an npm registry (default: <a href="https://registry.npmjs.org">https://registry.npmjs.org</a>)</td></tr>
+<tr><td>BUN_CONFIG_TOKEN</td><td>Set an auth token (currently does nothing)</td></tr>
+<tr><td>BUN_CONFIG_LOCKFILE_SAVE_PATH</td><td>File path to save the lockfile to (default: bun.lockb)</td></tr>
+<tr><td>BUN_CONFIG_YARN_LOCKFILE</td><td>Save a Yarn v1-style yarn.lock</td></tr>
+<tr><td>BUN_CONFIG_LINK_NATIVE_BINS</td><td>Point <code>bin</code> in package.json to a platform-specific dependency</td></tr>
+<tr><td>BUN_CONFIG_SKIP_SAVE_LOCKFILE</td><td>Don’t save a lockfile</td></tr>
+<tr><td>BUN_CONFIG_SKIP_LOAD_LOCKFILE</td><td>Don’t load a lockfile</td></tr>
+<tr><td>BUN_CONFIG_SKIP_INSTALL_PACKAGES</td><td>Don’t install any packages</td></tr>
+</tbody></table>
+</div>
+<p>bun always tries to use the fastest available installation method for the target platform. On macOS, that’s <code>clonefile</code> and on Linux, that’s <code>hardlink</code>. You can change which installation method is used with the <code>--backend</code> flag. When unavailable or on error, <code>clonefile</code> and <code>hardlink</code> fallsback to a platform-specific implementation of copying files.</p>
+<p>bun stores installed packages from npm in <code>~/.bun/install/cache/${name}@${version}</code>. Note that if the semver version has a <code>build</code> or a <code>pre</code> tag, it is replaced with a hash of that value instead. This is to reduce the chances of errors from long file paths, but unfortunately complicates figuring out where a package was installed on disk.</p>
+<p>When the <code>node_modules</code> folder exists, before installing, bun checks if the <code>&quot;name&quot;</code> and <code>&quot;version&quot;</code> in <code>package/package.json</code> in the expected node_modules folder matches the expected <code>name</code> and <code>version</code>. This is how it determines whether it should install. It uses a custom JSON parser which stops parsing as soon as it finds <code>&quot;name&quot;</code> and <code>&quot;version&quot;</code>.</p>
+<p>When a <code>bun.lockb</code> doesn’t exist or <code>package.json</code> has changed dependencies, tarballs are downloaded &amp; extracted eagerly while resolving.</p>
+<p>When a <code>bun.lockb</code> exists and <code>package.json</code> hasn’t changed, bun downloads missing dependencies lazily. If the package with a matching <code>name</code> &amp; <code>version</code> already exists in the expected location within <code>node_modules</code>, bun won’t attempt to download the tarball.</p>
+<h4 id="platform-specific-dependencies"><a class="header" href="#platform-specific-dependencies">Platform-specific dependencies?</a></h4>
+<p>bun stores normalized <code>cpu</code> and <code>os</code> values from npm in the lockfile, along with the resolved packages. It skips downloading, extracting, and installing packages disabled for the current target at runtime. This means the lockfile won’t change between platforms/architectures even if the packages ultimately installed do change.</p>
+<h4 id="peer-dependencies"><a class="header" href="#peer-dependencies">Peer dependencies?</a></h4>
+<p>Peer dependencies are handled similarly to yarn. <code>bun install</code> does not automatically install peer dependencies and will try to choose an existing dependency.</p>
+<h4 id="lockfile"><a class="header" href="#lockfile">Lockfile</a></h4>
+<p><code>bun.lockb</code> is bun’s binary lockfile format.</p>
+<h4 id="why-is-it-binary"><a class="header" href="#why-is-it-binary">Why is it binary?</a></h4>
+<p>In a word: Performance. bun’s lockfile saves &amp; loads incredibly quickly, and saves a lot more data than what is typically inside lockfiles.</p>
+<h4 id="how-do-i-inspect-it"><a class="header" href="#how-do-i-inspect-it">How do I inspect it?</a></h4>
+<p>For now, the easiest thing is to run <code>bun install -y</code>. That prints a Yarn v1-style yarn.lock file.</p>
+<h4 id="what-does-the-lockfile-store"><a class="header" href="#what-does-the-lockfile-store">What does the lockfile store?</a></h4>
+<p>Packages, metadata for those packages, the hoisted install order, dependencies for each package, what packages those dependencies resolved to, an integrity hash (if available), what each package was resolved to and which version (or equivalent).</p>
+<h4 id="why-is-it-fast"><a class="header" href="#why-is-it-fast">Why is it fast?</a></h4>
+<p>It uses linear arrays for all data. <a href="https://github.com/oven-sh/bun/blob/be03fc273a487ac402f19ad897778d74b6d72963/src/install/install.zig#L1825">Packages</a> are referenced by an auto-incrementing integer ID or a hash of the package name. Strings longer than 8 characters are de-duplicated. Prior to saving on disk, the lockfile is garbage-collected &amp; made deterministic by walking the package tree and cloning the packages in dependency order.</p>
+<h4 id="cache"><a class="header" href="#cache">Cache</a></h4>
+<p>To delete the cache:</p>
+<pre><code class="language-bash">rm -rf ~/.bun/install/cache
+</code></pre>
+<h4 id="npm-registry-metadata"><a class="header" href="#npm-registry-metadata">npm registry metadata</a></h4>
+<p>bun uses a binary format for caching NPM registry responses. This loads much faster than JSON and tends to be smaller on disk.
+You will see these files in <code>~/.bun/install/cache/*.npm</code>. The filename pattern is <code>${hash(packageName)}.npm</code>. It’s a hash so that extra directories don’t need to be created for scoped packages.</p>
+<p>bun’s usage of <code>Cache-Control</code> ignores <code>Age</code>. This improves performance, but means bun may be about 5 minutes out of date to receive the latest package version metadata from npm.</p>
+<h3 id="bun-run"><a class="header" href="#bun-run"><code>bun run</code></a></h3>
+<p><code>bun run</code> is a fast <code>package.json</code> script runner. Instead of waiting 170ms for your npm client to start every time, you wait 6ms for bun.</p>
+<p>By default, <code>bun run</code> prints the script that will be invoked:</p>
+<pre><code class="language-bash">bun run clean
+$ rm -rf node_modules/.cache dist
+</code></pre>
+<p>You can disable that with <code>--silent</code></p>
+<pre><code class="language-bash">bun run --silent clean
+</code></pre>
+<p><code>bun run ${script-name}</code> runs the equivalent of <code>npm run script-name</code>. For example, <code>bun run dev</code> runs the <code>dev</code> script in <code>package.json</code>, which may sometimes spin up non-bun processes.</p>
+<p><code>bun run ${javascript-file.js}</code> will run it with bun, as long as the file doesn't have a node shebang.</p>
+<p>To print a list of <code>scripts</code>, <code>bun run</code> without additional args:</p>
+<pre><code class="language-bash"># This command
+bun run
+
+# Prints this
+hello-create-react-app scripts:
+
+bun run start
+react-scripts start
+
+bun run build
+react-scripts build
+
+bun run test
+react-scripts test
+
+bun run eject
+react-scripts eject
+
+4 scripts
+</code></pre>
+<p><code>bun run</code> automatically loads environment variables from <code>.env</code> into the shell/task. <code>.env</code> files are loaded with the same priority as the rest of bun, so that means:</p>
+<ol>
+<li><code>.env.local</code> is first</li>
+<li>if (<code>$NODE_ENV</code> === <code>&quot;production&quot;</code>) <code>.env.production</code> else <code>.env.development</code></li>
+<li><code>.env</code></li>
+</ol>
+<p>If something is unexpected there, you can run <code>bun run env</code> to get a list of environment variables.</p>
+<p>The default shell it uses is <code>bash</code>, but if that’s not found, it tries <code>sh</code> and if still not found, it tries <code>zsh</code>. This is not configurable right now, but if you care, file an issue.</p>
+<p><code>bun run</code> automatically adds any parent <code>node_modules/.bin</code> to <code>$PATH</code> and if no scripts match, it will load that binary instead. That means you can run executables from packages, too.</p>
+<pre><code class="language-bash"># If you use Relay
+bun run relay-compiler
+
+# You can also do this, but:
+# - It will only lookup packages in `node_modules/.bin` instead of `$PATH`
+# - It will start bun’s dev server if the script name doesn’t exist (`bun` starts the dev server by default)
+bun relay-compiler
+</code></pre>
+<p>To pass additional flags through to the task or executable, there are two ways:</p>
+<pre><code class="language-bash"># Explicit: include &quot;--&quot; and anything after will be added. This is the recommended way because it is more reliable.
+bun run relay-compiler -- -–help
+
+# Implicit: if you do not include &quot;--&quot;, anything *after* the script name will be passed through
+# bun flags are parsed first, which means e.g. `bun run relay-compiler --help` will print bun’s help instead of relay-compiler’s help.
+bun run relay-compiler --schema foo.graphql
+</code></pre>
+<p><code>bun run</code> supports lifecycle hooks like <code>post${task}</code> and <code>pre{task}</code>. If they exist, they will run, matching the behavior of npm clients. If the <code>pre${task}</code> fails, the next task will not be run. There is currently no flag to skip these lifecycle tasks if they exist, if you want that file an issue.</p>
+<h3 id="bun-create"><a class="header" href="#bun-create"><code>bun create</code></a></h3>
+<p><code>bun create</code> is a fast way to create a new project from a template.</p>
+<p>At the time of writing, <code>bun create react app</code> runs ~11x faster on my local computer than <code>yarn create react-app app</code>. <code>bun create</code> currently does no caching (though your npm client does)</p>
+<h4 id="usage"><a class="header" href="#usage">Usage</a></h4>
+<p>Create a new Next.js project:</p>
+<pre><code class="language-bash">bun create next ./app
+</code></pre>
+<p>Create a new React project:</p>
+<pre><code class="language-bash">bun create react ./app
+</code></pre>
+<p>Create from a GitHub repo:</p>
+<pre><code class="language-bash">bun create ahfarmer/calculator ./app
+</code></pre>
+<p>To see a list of examples, run:</p>
+<pre><code class="language-bash">bun create
+</code></pre>
+<p>Format:</p>
+<pre><code class="language-bash">bun create github-user/repo-name destination
+bun create local-example-or-remote-example destination
+bun create /absolute/path/to-template-folder destination
+bun create https://github.com/github-user/repo-name destination
+bun create github.com/github-user/repo-name destination
+</code></pre>
+<p>Note: you don’t need <code>bun create</code> to use bun. You don’t need any configuration at all. This command exists to make it a little easier.</p>
+<h4 id="local-templates"><a class="header" href="#local-templates">Local templates</a></h4>
+<p>If you have your own boilerplate you prefer using, copy it into <code>$HOME/.bun-create/my-boilerplate-name</code>.</p>
+<p>Before checking bun’s examples folder, <code>bun create</code> checks for a local folder matching the input in:</p>
+<ul>
+<li><code>$BUN_CREATE_DIR/</code></li>
+<li><code>$HOME/.bun-create/</code></li>
+<li><code>$(pwd)/.bun-create/</code></li>
+</ul>
+<p>If a folder exists in any of those folders with the input, bun will use that instead of a remote template.</p>
+<p>To create a local template, run:</p>
+<pre><code class="language-bash">mkdir -p $HOME/.bun-create/new-template-name
+echo '{&quot;name&quot;:&quot;new-template-name&quot;}' &gt; $HOME/.bun-create/new-template-name/package.json
+</code></pre>
+<p>This lets you run:</p>
+<pre><code class="language-bash">bun create new-template-name ./app
+</code></pre>
+<p>Now your new template should appear when you run:</p>
+<pre><code class="language-bash">bun create
+</code></pre>
+<p>Warning: unlike with remote templates, <strong>bun will delete the entire destination folder if it already exists.</strong></p>
+<h4 id="flags"><a class="header" href="#flags">Flags</a></h4>
+<div class="table-wrapper"><table><thead><tr><th>Flag</th><th>Description</th></tr></thead><tbody>
+<tr><td>--npm</td><td>Use <code>npm</code> for tasks &amp; install</td></tr>
+<tr><td>--yarn</td><td>Use <code>yarn</code> for tasks &amp; install</td></tr>
+<tr><td>--pnpm</td><td>Use <code>pnpm</code> for tasks &amp; install</td></tr>
+<tr><td>--force</td><td>Overwrite existing files</td></tr>
+<tr><td>--no-install</td><td>Skip installing <code>node_modules</code> &amp; tasks</td></tr>
+<tr><td>--no-git</td><td>Don’t initialize a git repository</td></tr>
+<tr><td>--open</td><td>Start &amp; open in-browser after finish</td></tr>
+</tbody></table>
+</div><div class="table-wrapper"><table><thead><tr><th>Environment Variables</th><th>Description</th></tr></thead><tbody>
+<tr><td>GITHUB_API_DOMAIN</td><td>If you’re using a GitHub enterprise or a proxy, you can change what the endpoint requests to GitHub go</td></tr>
+<tr><td>GITHUB_API_TOKEN</td><td>This lets <code>bun create</code> work with private repositories or if you get rate-limited</td></tr>
+</tbody></table>
+</div>
+<p>By default, <code>bun create</code> will cancel if there are existing files it would overwrite and it's a remote template. You can pass <code>--force</code> to disable this behavior.</p>
+<h4 id="publishing-a-new-template"><a class="header" href="#publishing-a-new-template">Publishing a new template</a></h4>
+<p>Clone this repository and a new folder in <code>examples/</code> with your new template. The <code>package.json</code> must have a <code>name</code> that starts with <code>@bun-examples/</code>. Do not worry about publishing it, that will happen automatically after the PR is merged.</p>
+<p>Make sure to include a <code>.gitignore</code> that includes <code>node_modules</code> so that <code>node_modules</code> aren’t checked in to git when people download the template.</p>
+<h4 id="testing-your-new-template"><a class="header" href="#testing-your-new-template">Testing your new template</a></h4>
+<p>To test your new template, add it as a local template or pass the absolute path.</p>
+<pre><code class="language-bash">bun create /path/to/my/new/template destination-dir
+</code></pre>
+<p>Warning: <strong>This will always delete everything in destination-dir</strong>.</p>
+<h4 id="config"><a class="header" href="#config">Config</a></h4>
+<p>The <code>bun-create</code> section of <code>package.json</code> is automatically removed from the <code>package.json</code> on disk. This lets you add create-only steps without waiting for an extra package to install.</p>
+<p>There are currently two options:</p>
+<ul>
+<li><code>postinstall</code></li>
+<li><code>preinstall</code></li>
+</ul>
+<p>They can be an array of strings or one string. An array of steps will be executed in order.</p>
+<p>Here is an example:</p>
+<pre><code class="language-json">{
+  &quot;name&quot;: &quot;@bun-examples/next&quot;,
+  &quot;version&quot;: &quot;0.0.31&quot;,
+  &quot;main&quot;: &quot;index.js&quot;,
+  &quot;dependencies&quot;: {
+    &quot;next&quot;: &quot;11.1.2&quot;,
+    &quot;react&quot;: &quot;^17.0.2&quot;,
+    &quot;react-dom&quot;: &quot;^17.0.2&quot;,
+    &quot;react-is&quot;: &quot;^17.0.2&quot;
+  },
+  &quot;devDependencies&quot;: {
+    &quot;@types/react&quot;: &quot;^17.0.19&quot;,
+    &quot;bun-framework-next&quot;: &quot;^0.0.0-21&quot;,
+    &quot;typescript&quot;: &quot;^4.3.5&quot;
+  },
+  &quot;bun-create&quot;: {
+    &quot;postinstall&quot;: [&quot;bun bun --use next&quot;]
+  }
+}
+</code></pre>
+<p>By default, all commands run inside the environment exposed by the auto-detected npm client. This incurs a significant performance penalty, something like 150ms spent waiting for the npm client to start on each invocation.</p>
+<p>Any command that starts with <code>&quot;bun &quot;</code> will be run without npm, relying on the first <code>bun</code> binary in <code>$PATH</code>.</p>
+<h4 id="how-bun-create-works"><a class="header" href="#how-bun-create-works">How <code>bun create</code> works</a></h4>
+<p>When you run <code>bun create ${template} ${destination}</code>, here’s what happens:</p>
+<p>IF remote template</p>
+<ol>
+<li>
+<p>GET <code>registry.npmjs.org/@bun-examples/${template}/latest</code> and parse it</p>
+</li>
+<li>
+<p>GET <code>registry.npmjs.org/@bun-examples/${template}/-/${template}-${latestVersion}.tgz</code></p>
+</li>
+<li>
+<p>Decompress &amp; extract <code>${template}-${latestVersion}.tgz</code> into <code>${destination}</code></p>
+<ul>
+<li>If there are files that would overwrite, warn and exit unless <code>--force</code> is passed</li>
+</ul>
+</li>
+</ol>
+<p>IF GitHub repo</p>
+<ol>
+<li>
+<p>Download the tarball from GitHub’s API</p>
+</li>
+<li>
+<p>Decompress &amp; extract into <code>${destination}</code></p>
+<ul>
+<li>If there are files that would overwrite, warn and exit unless <code>--force</code> is passed</li>
+</ul>
+</li>
+</ol>
+<p>ELSE IF local template</p>
+<ol>
+<li>
+<p>Open local template folder</p>
+</li>
+<li>
+<p>Delete destination directory recursively</p>
+</li>
+<li>
+<p>Copy files recursively using the fastest system calls available (on macOS <code>fcopyfile</code> and Linux, <code>copy_file_range</code>). Do not copy or traverse into <code>node_modules</code> folder if exists (this alone makes it faster than <code>cp</code>)</p>
+</li>
+<li>
+<p>Parse the <code>package.json</code> (again!), update <code>name</code> to be <code>${basename(destination)}</code>, remove the <code>bun-create</code> section from the <code>package.json</code> and save the updated <code>package.json</code> to disk.</p>
+<ul>
+<li>IF Next.js is detected, add <code>bun-framework-next</code> to the list of dependencies</li>
+<li>IF Create React App is detected, add the entry point in /src/index.{js,jsx,ts,tsx} to <code>public/index.html</code></li>
+<li>IF Relay is detected, add <code>bun-macro-relay</code> so that Relay works</li>
+</ul>
+</li>
+<li>
+<p>Auto-detect the npm client, preferring <code>pnpm</code>, <code>yarn</code> (v1), and lastly <code>npm</code></p>
+</li>
+<li>
+<p>Run any tasks defined in <code>&quot;bun-create&quot;: { &quot;preinstall&quot; }</code> with the npm client</p>
+</li>
+<li>
+<p>Run <code>${npmClient} install</code> unless <code>--no-install</code> is passed OR no dependencies are in package.json</p>
+</li>
+<li>
+<p>Run any tasks defined in <code>&quot;bun-create&quot;: { &quot;preinstall&quot; }</code> with the npm client</p>
+</li>
+<li>
+<p>Run <code>git init; git add -A .; git commit -am &quot;Initial Commit&quot;;</code></p>
+<ul>
+<li>Rename <code>gitignore</code> to <code>.gitignore</code>. NPM automatically removes <code>.gitignore</code> files from appearing in packages.</li>
+<li>If there are dependencies, this runs in a separate thread concurrently while node_modules are being installed</li>
+<li>Using libgit2 if available was tested and performed 3x slower in microbenchmarks</li>
+</ul>
+</li>
+<li>
+<p>Done</p>
+</li>
+</ol>
+<p><code>misctools/publish-examples.js</code> publishes all examples to npm.</p>
+<h3 id="bun-bun"><a class="header" href="#bun-bun"><code>bun bun</code></a></h3>
+<p>Run <code>bun bun ./path-to.js</code> to generate a <code>node_modules.bun</code> file containing all imported dependencies (recursively).</p>
+<h4 id="why-bundle"><a class="header" href="#why-bundle">Why bundle?</a></h4>
+<ul>
+<li>For browsers, loading entire apps without bundling dependencies is typically slow. With a fast bundler &amp; transpiler, the bottleneck eventually becomes the web browser’s ability to run many network requests concurrently. There are many workarounds for this. <code>&lt;link rel=&quot;modulepreload&quot;&gt;</code>, HTTP/3, etc., but none are more effective than bundling. If you have reproducible evidence to the contrary, feel free to submit an issue. It would be better if bundling wasn’t necessary.</li>
+<li>On the server, bundling reduces the number of filesystem lookups to load JavaScript. While filesystem lookups are faster than HTTP requests, there’s still overhead.</li>
+</ul>
+<h4 id="what-is-bun"><a class="header" href="#what-is-bun">What is <code>.bun</code>?</a></h4>
+<p>Note: <a href="https://github.com/oven-sh/bun/issues/121">This format may change soon</a></p>
+<p>The <code>.bun</code> file contains:</p>
+<ul>
+<li>all the bundled source code</li>
+<li>all the bundled source code metadata</li>
+<li>project metadata &amp; configuration</li>
+</ul>
+<p>Here are some of the questions <code>.bun</code> files answer:</p>
+<ul>
+<li>when I import <code>react/index.js</code>, where in the <code>.bun</code> is the code for that? (not resolving, just the code)</li>
+<li>what modules of a package are used?</li>
+<li>what framework is used? (e.g., Next.js)</li>
+<li>where is the routes directory?</li>
+<li>how big is each imported dependency?</li>
+<li>what is the hash of the bundle’s contents? (for etags)</li>
+<li>what is the name &amp; version of every npm package exported in this bundle?</li>
+<li>what modules from which packages are used in this project? (&quot;project&quot; is defined as all the entry points used to generate the .bun)</li>
+</ul>
+<p>All in one file.</p>
+<p>It’s a little like a build cache, but designed for reuse across builds.</p>
+<h4 id="position-independent-code"><a class="header" href="#position-independent-code">Position-independent code</a></h4>
+<p>From a design perspective, the most important part of the <code>.bun</code> format is how code is organized. Each module is exported by a hash like this:</p>
+<pre><code class="language-js">// preact/dist/preact.module.js
+export var $eb6819b = $$m({
+  &quot;preact/dist/preact.module.js&quot;: (module, exports) =&gt; {
+    var n, l, u, i, t, o, r, f, e = {}, c = [], s = /acit|ex(?:s|g|n|p|$)|rph|grid|ows|mnc|ntw|ine[ch]|zoo|^ord|itera/i;
+    // ... rest of code
+</code></pre>
+<p>This makes bundled modules <a href="https://en.wikipedia.org/wiki/Position-independent_code">position-independent</a>. In theory, one could import only the exact modules in-use without reparsing code and without generating a new bundle. One bundle can dynamically become many bundles comprising only the modules in use on the webpage. Thanks to the metadata with the byte offsets, a web server can send each module to browsers <a href="https://en.wikipedia.org/wiki/Zero-copy">zero-copy</a> using <a href="https://man7.org/linux/man-pages/man2/sendfile.2.html">sendfile</a>. bun itself is not quite this smart yet, but these optimizations would be useful in production and potentially very useful for React Server Components.</p>
+<p>To see the schema inside, have a look at <a href="./src/api/schema.d.ts#:%7E:text=export%20interface-,JavascriptBundleContainer,-%7B"><code>JavascriptBundleContainer</code></a>. You can find JavaScript bindings to read the metadata in <a href="./src/api/schema.js">src/api/schema.js</a>. This is not really an API yet. It’s missing the part where it gets the binary data from the bottom of the file. Someday, I want this to be usable by other tools too.</p>
+<h4 id="where-is-the-code"><a class="header" href="#where-is-the-code">Where is the code?</a></h4>
+<p><code>.bun</code> files are marked as executable.</p>
+<p>To print out the code, run <code>./node_modules.bun</code> in your terminal or run <code>bun ./path-to-node_modules.bun</code>.</p>
+<p>Here is a copy-pastable example:</p>
+<pre><code class="language-bash">./node_modules.bun &gt; node_modules.js
+</code></pre>
+<p>This works because every <code>.bun</code> file starts with this:</p>
+<pre><code class="language-bash">#!/usr/bin/env bun
+</code></pre>
+<p>To deploy to production with bun, you’ll want to get the code from the <code>.bun</code> file and stick that somewhere your web server can find it (or if you’re using Vercel or a Rails app, in a <code>public</code> folder).</p>
+<p>Note that <code>.bun</code> is a binary file format, so just opening it in VSCode or vim might render strangely.</p>
+<h4 id="advanced"><a class="header" href="#advanced">Advanced</a></h4>
+<p>By default, <code>bun bun</code> only bundles external dependencies that are <code>import</code>ed or <code>require</code>d in either app code or another external dependency. An &quot;external dependency&quot; is defined as, &quot;A JavaScript-like file that has <code>/node_modules/</code> in the resolved file path and a corresponding <code>package.json</code>&quot;.</p>
+<p>To force bun to bundle packages which are not located in a <code>node_modules</code> folder (i.e., the final, resolved path following all symlinks), add a <code>bun</code> section to the root project’s <code>package.json</code> with <code>alwaysBundle</code> set to an array of package names to always bundle. Here’s an example:</p>
+<pre><code class="language-json">{
+  &quot;name&quot;: &quot;my-package-name-in-here&quot;,
+  &quot;bun&quot;: {
+    &quot;alwaysBundle&quot;: [&quot;@mybigcompany/my-workspace-package&quot;]
+  }
+}
+</code></pre>
+<p>Bundled dependencies are not eligible for Hot Module Reloading. The code is served to browsers &amp; bun.js verbatim. But, in the future, it may be sectioned off into only parts of the bundle being used. That’s possible in the current version of the <code>.bun</code> file (so long as you know which files are necessary), but it’s not implemented yet. Longer-term, it will include all <code>import</code> and <code>export</code> of each module inside.</p>
+<h4 id="what-is-the-module-id-hash"><a class="header" href="#what-is-the-module-id-hash">What is the module ID hash?</a></h4>
+<p>The <code>$eb6819b</code> hash used here:</p>
+<pre><code class="language-js">export var $eb6819b = $$m({
+</code></pre>
+<p>Is generated like this:</p>
+<ol>
+<li>Murmur3 32-bit hash of <code>package.name@package.version</code>. This is the hash uniquely identifying the npm package.</li>
+<li>Wyhash 64 of the <code>package.hash</code> + <code>package_path</code>. <code>package_path</code> means &quot;relative to the root of the npm package, where is the module imported?&quot;. For example, if you imported <code>react/jsx-dev-runtime.js</code>, the <code>package_path</code> is <code>jsx-dev-runtime.js</code>. <code>react-dom/cjs/react-dom.development.js</code> would be <code>cjs/react-dom.development.js</code></li>
+<li>Truncate the hash generated above to a <code>u32</code></li>
+</ol>
+<p>The implementation details of this module ID hash will vary between versions of bun. The important part is the metadata contains the module IDs, the package paths, and the package hashes, so it shouldn’t really matter in practice if other tooling wants to make use of any of this.</p>
+<h3 id="bun-upgrade"><a class="header" href="#bun-upgrade"><code>bun upgrade</code></a></h3>
+<p>To upgrade bun, run <code>bun upgrade</code>.</p>
+<p>It automatically downloads the latest version of bun and overwrites the currently-running version.</p>
+<p>This works by checking the latest version of bun in <a href="https://github.com/Jarred-Sumner/bun-releases-for-updater/releases">bun-releases-for-updater</a> and unzipping it using the system-provided <code>unzip</code> library (so that Gatekeeper works on macOS)</p>
+<p>If for any reason you run into issues, you can also use the curl install script:</p>
+<pre><code class="language-bash">curl https://bun.sh/install | bash
+</code></pre>
+<p>It will still work when bun is already installed.</p>
+<p>bun is distributed as a single binary file, so you can also do this manually:</p>
+<ul>
+<li>Download the latest version of bun for your platform in <a href="https://github.com/Jarred-Sumner/bun-releases-for-updater/releases/latest">bun-releases-for-updater</a> (<code>darwin</code> == macOS)</li>
+<li>Unzip the folder</li>
+<li>Move the <code>bun</code> binary to <code>~/.bun/bin</code> (or anywhere)</li>
+</ul>
+<h3 id="bun-completions"><a class="header" href="#bun-completions"><code>bun completions</code></a></h3>
+<p>This command installs completions for <code>zsh</code> and/or <code>fish</code>. It runs automatically on every <code>bun upgrade</code> and on install. It reads from <code>$SHELL</code> to determine which shell to install for. It tries several common shell completion directories for your shell and OS.</p>
+<p>If you want to copy the completions manually, run <code>bun completions &gt; path-to-file</code>. If you know the completions directory to install them to, run <code>bun completions /path/to/directory</code>.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="troubleshooting.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                            <a rel="next" href="bun_serve.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="troubleshooting.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                    <a rel="next" href="bun_serve.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+        <script type="text/javascript">
+            window.playground_copyable = true;
+        </script>
+        <script src="elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="searcher.js" type="text/javascript" charset="utf-8"></script>
+        <script src="clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+    </body>
+</html>

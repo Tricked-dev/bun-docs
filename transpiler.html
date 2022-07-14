@@ -1,0 +1,357 @@
+<!DOCTYPE HTML>
+<html lang="en" class="sidebar-visible no-js ayu">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Transpiler - Bun Runtime</title>
+        <!-- Custom HTML head -->
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+    </head>
+    <body>
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">
+            var path_to_root = "";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "ayu";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('ayu')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="installing.html"><strong aria-hidden="true">1.</strong> Installing</a></li><li class="chapter-item expanded "><a href="using.html"><strong aria-hidden="true">2.</strong> Using Bun</a></li><li class="chapter-item expanded "><a href="packagemanager.html"><strong aria-hidden="true">3.</strong> Using bun as a package manager</a></li><li class="chapter-item expanded "><a href="taskrunner.html"><strong aria-hidden="true">4.</strong> Using bun as a task runner</a></li><li class="chapter-item expanded "><a href="examples.html"><strong aria-hidden="true">5.</strong> Examples</a></li><li class="chapter-item expanded "><a href="limitations.html"><strong aria-hidden="true">6.</strong> Limitations</a></li><li class="chapter-item expanded "><a href="configuration.html"><strong aria-hidden="true">7.</strong> Configuration</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="loaders.html"><strong aria-hidden="true">7.1.</strong> Loaders</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="css.html"><strong aria-hidden="true">7.1.1.</strong> css</a></li></ol></li></ol></li><li class="chapter-item expanded "><a href="frameworks.html"><strong aria-hidden="true">8.</strong> frameworks</a></li><li class="chapter-item expanded "><a href="troubleshooting.html"><strong aria-hidden="true">9.</strong> troubleshooting</a></li><li class="chapter-item expanded "><a href="reference.html"><strong aria-hidden="true">10.</strong> Reference</a></li><li class="chapter-item expanded "><a href="bun_serve.html"><strong aria-hidden="true">11.</strong> Bun Serve</a></li><li class="chapter-item expanded "><a href="bun_write.html"><strong aria-hidden="true">12.</strong> Bun Write</a></li><li class="chapter-item expanded "><a href="bun_sqlite.html"><strong aria-hidden="true">13.</strong> bun:sqlite</a></li><li class="chapter-item expanded "><a href="ffi/index.html"><strong aria-hidden="true">14.</strong> bun:ffi</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="ffi/low_overhead.html"><strong aria-hidden="true">14.1.</strong> Low Overhead FFI</a></li><li class="chapter-item expanded "><a href="ffi/usage.html"><strong aria-hidden="true">14.2.</strong> Usage</a></li><li class="chapter-item expanded "><a href="ffi/supported_types.html"><strong aria-hidden="true">14.3.</strong> Supported Types</a></li></ol></li><li class="chapter-item expanded "><a href="enviromentvariables.html"><strong aria-hidden="true">15.</strong> Environment variables</a></li><li class="chapter-item expanded "><a href="transpiler.html" class="active"><strong aria-hidden="true">16.</strong> Transpiler</a></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu (default)</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Bun Runtime</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h3 id="buntranspiler"><a class="header" href="#buntranspiler"><code>Bun.Transpiler</code></a></h3>
+<p><code>Bun.Transpiler</code> lets you use Bun's transpiler from JavaScript (available in Bun.js)</p>
+<pre><code class="language-ts">type Loader = &quot;jsx&quot; | &quot;js&quot; | &quot;ts&quot; | &quot;tsx&quot;;
+
+interface TranspilerOptions {
+  // Replace key with value. Value must be a JSON string.
+  // @example
+  // ```
+  // { &quot;process.env.NODE_ENV&quot;: &quot;\&quot;production\&quot;&quot; }
+  // ```
+  define: Record&lt;string, string&gt;,
+
+  // What is the default loader used for this transpiler?
+  loader: Loader,
+
+  // What platform are we targeting? This may affect how import and/or require is used
+  platform: &quot;browser&quot; | &quot;bun&quot; | &quot;macro&quot; | &quot;node&quot;,
+
+  // TSConfig.json file as stringified JSON or an object
+  // Use this to set a custom JSX factory, fragment, or import source
+  // For example, if you want to use Preact instead of React. Or if you want to use Emotion.
+  tsconfig: string | TSConfig,
+
+  // Replace imports with macros
+  macros: MacroMap,
+}
+
+// This lets you use macros
+interface MacroMap {
+  // @example
+  // ```
+  // {
+  //   &quot;react-relay&quot;: {
+  //     &quot;graphql&quot;: &quot;bun-macro-relay/bun-macro-relay.tsx&quot;
+  //   }
+  // }
+  // ```
+  [packagePath: string]: {
+    [importItemName: string]: string,
+  },
+}
+
+class Bun.Transpiler {
+  constructor(options: TranspilerOptions)
+
+  transform(code: string, loader?: Loader): Promise&lt;string&gt;
+  transformSync(code: string, loader?: Loader): string
+
+  scan(code: string): {exports: string[], imports: Import}
+  scanImports(code: string): Import[]
+}
+
+type Import = {
+  path: string,
+  kind:
+  // import foo from 'bar'; in JavaScript
+  | &quot;import-statement&quot;
+  // require(&quot;foo&quot;) in JavaScript
+  | &quot;require-call&quot;
+  // require.resolve(&quot;foo&quot;) in JavaScript
+  | &quot;require-resolve&quot;
+  // Dynamic import() in JavaScript
+  | &quot;dynamic-import&quot;
+  // @import() in CSS
+  | &quot;import-rule&quot;
+  // url() in CSS
+  | &quot;url-token&quot;
+  // The import was injected by Bun
+  | &quot;internal&quot;
+  // Entry point
+  // Probably won't see this one
+  | &quot;entry-point&quot;
+}
+
+const transpiler = new Bun.Transpiler({ loader: &quot;jsx&quot; });
+</code></pre>
+<h4 id="buntranspilertransformsync"><a class="header" href="#buntranspilertransformsync"><code>Bun.Transpiler.transformSync</code></a></h4>
+<p>This lets you transpile JavaScript, TypeScript, TSX, and JSX using Bun's transpiler. It does not resolve modules.</p>
+<p>It is synchronous and runs in the same thread as other JavaScript code.</p>
+<pre><code class="language-js">const transpiler = new Bun.Transpiler({ loader: &quot;jsx&quot; });
+transpiler.transformSync(&quot;&lt;div&gt;hi!&lt;/div&gt;&quot;);
+</code></pre>
+<pre><code class="language-js">import { __require as require } from &quot;bun:wrap&quot;;
+import * as JSX from &quot;react/jsx-dev-runtime&quot;;
+var jsx = require(JSX).jsxDEV;
+
+export default jsx(
+  &quot;div&quot;,
+  {
+    children: &quot;hi!&quot;,
+  },
+  undefined,
+  false,
+  undefined,
+  this
+);
+</code></pre>
+<p>If a macro is used, it will be run in the same thread as the transpiler, but in a separate event loop from the rest of your application. Currently, globals between macros and regular code are shared, which means it is possible (but not recommended) to share states between macros and regular code. Attempting to use AST nodes outside of a macro is undefined behavior.</p>
+<h4 id="buntranspilertransform"><a class="header" href="#buntranspilertransform"><code>Bun.Transpiler.transform</code></a></h4>
+<p>This lets you transpile JavaScript, TypeScript, TSX, and JSX using Bun's transpiler. It does not resolve modules.</p>
+<p>It is async and automatically runs in Bun's worker threadpool. That means, if you run it 100 times, it will run it across <code>Math.floor($cpu_count * 0.8)</code> threads without blocking the main JavaScript thread.</p>
+<p>If code uses a macro, it will potentially spawn a new copy of Bun.js' JavaScript runtime environment in that new thread.</p>
+<p>Unless you're transpiling <em>many</em> large files, you should probably use <code>Bun.Transpiler.transformSync</code>. The cost of the threadpool will often take longer than actually transpiling code.</p>
+<pre><code class="language-js">const transpiler = new Bun.Transpiler({ loader: &quot;jsx&quot; });
+await transpiler.transform(&quot;&lt;div&gt;hi!&lt;/div&gt;&quot;);
+</code></pre>
+<pre><code class="language-js">import { __require as require } from &quot;bun:wrap&quot;;
+import * as JSX from &quot;react/jsx-dev-runtime&quot;;
+var jsx = require(JSX).jsxDEV;
+
+export default jsx(
+  &quot;div&quot;,
+  {
+    children: &quot;hi!&quot;,
+  },
+  undefined,
+  false,
+  undefined,
+  this
+);
+</code></pre>
+<p>You can also pass a <code>Loader</code> as a string</p>
+<pre><code class="language-js">await transpiler.transform(&quot;&lt;div&gt;hi!&lt;/div&gt;&quot;, &quot;tsx&quot;);
+</code></pre>
+<h4 id="buntranspilerscan"><a class="header" href="#buntranspilerscan"><code>Bun.Transpiler.scan</code></a></h4>
+<p>This is a fast way to get a list of imports &amp; exports used in a JavaScript/jsx or TypeScript/tsx file.</p>
+<p>This function is synchronous.</p>
+<pre><code class="language-ts">const transpiler = new Bun.Transpiler({ loader: &quot;ts&quot; });
+
+transpiler.scan(`
+import React from 'react';
+import Remix from 'remix';
+import type {ReactNode} from 'react';
+
+export const loader = () =&gt; import('./loader');
+`);
+</code></pre>
+<pre><code class="language-ts">{
+  &quot;exports&quot;: [
+    &quot;loader&quot;
+  ],
+  &quot;imports&quot;: [
+    {
+      &quot;kind&quot;: &quot;import-statement&quot;,
+      &quot;path&quot;: &quot;react&quot;
+    },
+    {
+      &quot;kind&quot;: &quot;import-statement&quot;,
+      &quot;path&quot;: &quot;remix&quot;
+    },
+    {
+      &quot;kind&quot;: &quot;dynamic-import&quot;,
+      &quot;path&quot;: &quot;./loader&quot;
+    }
+  ]
+}
+
+</code></pre>
+<h4 id="buntranspilerscanimports"><a class="header" href="#buntranspilerscanimports"><code>Bun.Transpiler.scanImports</code></a></h4>
+<p>This is a fast path for getting a list of imports used in a JavaScript/jsx or TypeScript/tsx file. It skips the visiting pass, which means it is faster but less accurate. You probably won't notice a difference between <code>Bun.Transpiler.scan</code> and <code>Bun.Transpiler.scanImports</code> often. You might notice it for very large files (megabytes).</p>
+<p>This function is synchronous.</p>
+<pre><code class="language-ts">const transpiler = new Bun.Transpiler({ loader: &quot;ts&quot; });
+
+transpiler.scanImports(`
+import React from 'react';
+import Remix from 'remix';
+import type {ReactNode} from 'react';
+
+export const loader = () =&gt; import('./loader');
+`);
+</code></pre>
+<pre><code class="language-json">[
+  {
+    &quot;kind&quot;: &quot;import-statement&quot;,
+    &quot;path&quot;: &quot;react&quot;
+  },
+  {
+    &quot;kind&quot;: &quot;import-statement&quot;,
+    &quot;path&quot;: &quot;remix&quot;
+  },
+  {
+    &quot;kind&quot;: &quot;dynamic-import&quot;,
+    &quot;path&quot;: &quot;./loader&quot;
+  }
+]
+</code></pre>
+<p>x</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="enviromentvariables.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="enviromentvariables.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+        <script type="text/javascript">
+            window.playground_copyable = true;
+        </script>
+        <script src="elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="searcher.js" type="text/javascript" charset="utf-8"></script>
+        <script src="clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+    </body>
+</html>

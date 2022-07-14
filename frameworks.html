@@ -1,0 +1,317 @@
+<!DOCTYPE HTML>
+<html lang="en" class="sidebar-visible no-js ayu">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>frameworks - Bun Runtime</title>
+        <!-- Custom HTML head -->
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+    </head>
+    <body>
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">
+            var path_to_root = "";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "ayu";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('ayu')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="installing.html"><strong aria-hidden="true">1.</strong> Installing</a></li><li class="chapter-item expanded "><a href="using.html"><strong aria-hidden="true">2.</strong> Using Bun</a></li><li class="chapter-item expanded "><a href="packagemanager.html"><strong aria-hidden="true">3.</strong> Using bun as a package manager</a></li><li class="chapter-item expanded "><a href="taskrunner.html"><strong aria-hidden="true">4.</strong> Using bun as a task runner</a></li><li class="chapter-item expanded "><a href="examples.html"><strong aria-hidden="true">5.</strong> Examples</a></li><li class="chapter-item expanded "><a href="limitations.html"><strong aria-hidden="true">6.</strong> Limitations</a></li><li class="chapter-item expanded "><a href="configuration.html"><strong aria-hidden="true">7.</strong> Configuration</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="loaders.html"><strong aria-hidden="true">7.1.</strong> Loaders</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="css.html"><strong aria-hidden="true">7.1.1.</strong> css</a></li></ol></li></ol></li><li class="chapter-item expanded "><a href="frameworks.html" class="active"><strong aria-hidden="true">8.</strong> frameworks</a></li><li class="chapter-item expanded "><a href="troubleshooting.html"><strong aria-hidden="true">9.</strong> troubleshooting</a></li><li class="chapter-item expanded "><a href="reference.html"><strong aria-hidden="true">10.</strong> Reference</a></li><li class="chapter-item expanded "><a href="bun_serve.html"><strong aria-hidden="true">11.</strong> Bun Serve</a></li><li class="chapter-item expanded "><a href="bun_write.html"><strong aria-hidden="true">12.</strong> Bun Write</a></li><li class="chapter-item expanded "><a href="bun_sqlite.html"><strong aria-hidden="true">13.</strong> bun:sqlite</a></li><li class="chapter-item expanded "><a href="ffi/index.html"><strong aria-hidden="true">14.</strong> bun:ffi</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="ffi/low_overhead.html"><strong aria-hidden="true">14.1.</strong> Low Overhead FFI</a></li><li class="chapter-item expanded "><a href="ffi/usage.html"><strong aria-hidden="true">14.2.</strong> Usage</a></li><li class="chapter-item expanded "><a href="ffi/supported_types.html"><strong aria-hidden="true">14.3.</strong> Supported Types</a></li></ol></li><li class="chapter-item expanded "><a href="enviromentvariables.html"><strong aria-hidden="true">15.</strong> Environment variables</a></li><li class="chapter-item expanded "><a href="transpiler.html"><strong aria-hidden="true">16.</strong> Transpiler</a></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu (default)</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Bun Runtime</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h3 id="frameworks"><a class="header" href="#frameworks">Frameworks</a></h3>
+<blockquote>
+<p><strong>Warning</strong>
+This will soon have breaking changes. It was designed when Bun was mostly a dev server and not a JavaScript runtime.</p>
+</blockquote>
+<p>Frameworks preconfigure bun to enable developers to use bun with their existing tooling.</p>
+<p>Frameworks are configured via the <code>framework</code> object in the <code>package.json</code> of the framework (not in the application’s <code>package.json</code>):</p>
+<p>Here is an example:</p>
+<pre><code class="language-json">{
+  &quot;name&quot;: &quot;bun-framework-next&quot;,
+  &quot;version&quot;: &quot;0.0.0-18&quot;,
+  &quot;description&quot;: &quot;&quot;,
+  &quot;framework&quot;: {
+    &quot;displayName&quot;: &quot;Next.js&quot;,
+    &quot;static&quot;: &quot;public&quot;,
+    &quot;assetPrefix&quot;: &quot;_next/&quot;,
+    &quot;router&quot;: {
+      &quot;dir&quot;: [&quot;pages&quot;, &quot;src/pages&quot;],
+      &quot;extensions&quot;: [&quot;.js&quot;, &quot;.ts&quot;, &quot;.tsx&quot;, &quot;.jsx&quot;]
+    },
+    &quot;css&quot;: &quot;onimportcss&quot;,
+    &quot;development&quot;: {
+      &quot;client&quot;: &quot;client.development.tsx&quot;,
+      &quot;fallback&quot;: &quot;fallback.development.tsx&quot;,
+      &quot;server&quot;: &quot;server.development.tsx&quot;,
+      &quot;css&quot;: &quot;onimportcss&quot;,
+      &quot;define&quot;: {
+        &quot;client&quot;: {
+          &quot;.env&quot;: &quot;NEXT_PUBLIC_&quot;,
+          &quot;defaults&quot;: {
+            &quot;process.env.__NEXT_TRAILING_SLASH&quot;: &quot;false&quot;,
+            &quot;process.env.NODE_ENV&quot;: &quot;\&quot;development\&quot;&quot;,
+            &quot;process.env.__NEXT_ROUTER_BASEPATH&quot;: &quot;''&quot;,
+            &quot;process.env.__NEXT_SCROLL_RESTORATION&quot;: &quot;false&quot;,
+            &quot;process.env.__NEXT_I18N_SUPPORT&quot;: &quot;false&quot;,
+            &quot;process.env.__NEXT_HAS_REWRITES&quot;: &quot;false&quot;,
+            &quot;process.env.__NEXT_ANALYTICS_ID&quot;: &quot;null&quot;,
+            &quot;process.env.__NEXT_OPTIMIZE_CSS&quot;: &quot;false&quot;,
+            &quot;process.env.__NEXT_CROSS_ORIGIN&quot;: &quot;''&quot;,
+            &quot;process.env.__NEXT_STRICT_MODE&quot;: &quot;false&quot;,
+            &quot;process.env.__NEXT_IMAGE_OPTS&quot;: &quot;null&quot;
+          }
+        },
+        &quot;server&quot;: {
+          &quot;.env&quot;: &quot;NEXT_&quot;,
+          &quot;defaults&quot;: {
+            &quot;process.env.__NEXT_TRAILING_SLASH&quot;: &quot;false&quot;,
+            &quot;process.env.__NEXT_OPTIMIZE_FONTS&quot;: &quot;false&quot;,
+            &quot;process.env.NODE_ENV&quot;: &quot;\&quot;development\&quot;&quot;,
+            &quot;process.env.__NEXT_OPTIMIZE_IMAGES&quot;: &quot;false&quot;,
+            &quot;process.env.__NEXT_OPTIMIZE_CSS&quot;: &quot;false&quot;,
+            &quot;process.env.__NEXT_ROUTER_BASEPATH&quot;: &quot;''&quot;,
+            &quot;process.env.__NEXT_SCROLL_RESTORATION&quot;: &quot;false&quot;,
+            &quot;process.env.__NEXT_I18N_SUPPORT&quot;: &quot;false&quot;,
+            &quot;process.env.__NEXT_HAS_REWRITES&quot;: &quot;false&quot;,
+            &quot;process.env.__NEXT_ANALYTICS_ID&quot;: &quot;null&quot;,
+            &quot;process.env.__NEXT_CROSS_ORIGIN&quot;: &quot;''&quot;,
+            &quot;process.env.__NEXT_STRICT_MODE&quot;: &quot;false&quot;,
+            &quot;process.env.__NEXT_IMAGE_OPTS&quot;: &quot;null&quot;,
+            &quot;global&quot;: &quot;globalThis&quot;,
+            &quot;window&quot;: &quot;undefined&quot;
+          }
+        }
+      }
+    }
+  }
+}
+</code></pre>
+<p>Here are type definitions:</p>
+<pre><code class="language-ts">type Framework = Environment &amp; {
+  // This changes what’s printed in the console on load
+  displayName?: string;
+
+  // This allows a prefix to be added (and ignored) to requests.
+  // Useful for integrating an existing framework that expects internal routes to have a prefix
+  // e.g. &quot;_next&quot;
+  assetPrefix?: string;
+
+  development?: Environment;
+  production?: Environment;
+
+  // The directory used for serving unmodified assets like fonts and images
+  // Defaults to &quot;public&quot; if exists, else &quot;static&quot;, else disabled.
+  static?: string;
+
+  // &quot;onimportcss&quot; disables the automatic &quot;onimportcss&quot; feature
+  // If the framework does routing, you may want to handle CSS manually
+  // &quot;facade&quot; removes CSS imports from JavaScript files,
+  //    and replaces an imported object with a proxy that mimics CSS module support without doing any class renaming.
+  css?: &quot;onimportcss&quot; | &quot;facade&quot;;
+
+  // bun’s filesystem router
+  router?: Router;
+};
+
+type Define = {
+  // By passing &quot;.env&quot;, bun will automatically load .env.local, .env.development, and .env if exists in the project root
+  //    (in addition to the processes’ environment variables)
+  // When &quot;*&quot;, all environment variables will be automatically injected into the JavaScript loader
+  // When a string like &quot;NEXT_PUBLIC_&quot;, only environment variables starting with that prefix will be injected
+
+  &quot;.env&quot;: string | &quot;*&quot;;
+
+  // These environment variables will be injected into the JavaScript loader
+  // These are the equivalent of Webpack’s resolve.alias and esbuild’s --define.
+  // Values are parsed as JSON, so they must be valid JSON. The only exception is '' is a valid string, to simplify writing stringified JSON in JSON.
+  // If not set, `process.env.NODE_ENV` will be transformed into &quot;development&quot;.
+  defaults: Record&lt;string, string&gt;;
+};
+
+type Environment = {
+  // This is a wrapper for the client-side entry point for a route.
+  // This allows frameworks to run initialization code on pages.
+  client: string;
+  // This is a wrapper for the server-side entry point for a route.
+  // This allows frameworks to run initialization code on pages.
+  server: string;
+  // This runs when &quot;server&quot; code fails to load due to an exception.
+  fallback: string;
+
+  // This is how environment variables and .env is configured.
+  define?: Define;
+};
+
+// bun’s filesystem router
+// Currently, bun supports pages by either an absolute match or a parameter match.
+// pages/index.tsx will be executed on navigation to &quot;/&quot; and &quot;/index&quot;
+// pages/posts/[id].tsx will be executed on navigation to &quot;/posts/123&quot;
+// Routes &amp; parameters are automatically passed to `fallback` and `server`.
+type Router = {
+  // This determines the folder to look for pages
+  dir: string[];
+
+  // These are the allowed file extensions for pages.
+  extensions?: string[];
+};
+</code></pre>
+<p>To use a framework, you pass <code>bun bun --use package-name</code>.</p>
+<p>Your framework’s <code>package.json</code> <code>name</code> should start with <code>bun-framework-</code>. This is so that people can type something like <code>bun bun --use next</code> and it will check <code>bun-framework-next</code> first. This is similar to how Babel plugins tend to start with <code>babel-plugin-</code>.</p>
+<p>For developing frameworks, you can also do <code>bun bun --use ./relative-path-to-framework</code>.</p>
+<p>If you’re interested in adding a framework integration, please reach out. There’s a lot here, and it’s not entirely documented yet.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="css.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                            <a rel="next" href="troubleshooting.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="css.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                    <a rel="next" href="troubleshooting.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+        <script type="text/javascript">
+            window.playground_copyable = true;
+        </script>
+        <script src="elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="searcher.js" type="text/javascript" charset="utf-8"></script>
+        <script src="clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+    </body>
+</html>

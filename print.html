@@ -1,0 +1,2486 @@
+<!DOCTYPE HTML>
+<html lang="en" class="sidebar-visible no-js ayu">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Bun Runtime</title>
+        <meta name="robots" content="noindex" />
+        <!-- Custom HTML head -->
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+    </head>
+    <body>
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">
+            var path_to_root = "";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "ayu";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('ayu')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="installing.html"><strong aria-hidden="true">1.</strong> Installing</a></li><li class="chapter-item expanded "><a href="using.html"><strong aria-hidden="true">2.</strong> Using Bun</a></li><li class="chapter-item expanded "><a href="packagemanager.html"><strong aria-hidden="true">3.</strong> Using bun as a package manager</a></li><li class="chapter-item expanded "><a href="taskrunner.html"><strong aria-hidden="true">4.</strong> Using bun as a task runner</a></li><li class="chapter-item expanded "><a href="examples.html"><strong aria-hidden="true">5.</strong> Examples</a></li><li class="chapter-item expanded "><a href="limitations.html"><strong aria-hidden="true">6.</strong> Limitations</a></li><li class="chapter-item expanded "><a href="configuration.html"><strong aria-hidden="true">7.</strong> Configuration</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="loaders.html"><strong aria-hidden="true">7.1.</strong> Loaders</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="css.html"><strong aria-hidden="true">7.1.1.</strong> css</a></li></ol></li></ol></li><li class="chapter-item expanded "><a href="frameworks.html"><strong aria-hidden="true">8.</strong> frameworks</a></li><li class="chapter-item expanded "><a href="troubleshooting.html"><strong aria-hidden="true">9.</strong> troubleshooting</a></li><li class="chapter-item expanded "><a href="reference.html"><strong aria-hidden="true">10.</strong> Reference</a></li><li class="chapter-item expanded "><a href="bun_serve.html"><strong aria-hidden="true">11.</strong> Bun Serve</a></li><li class="chapter-item expanded "><a href="bun_write.html"><strong aria-hidden="true">12.</strong> Bun Write</a></li><li class="chapter-item expanded "><a href="bun_sqlite.html"><strong aria-hidden="true">13.</strong> bun:sqlite</a></li><li class="chapter-item expanded "><a href="ffi/index.html"><strong aria-hidden="true">14.</strong> bun:ffi</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="ffi/low_overhead.html"><strong aria-hidden="true">14.1.</strong> Low Overhead FFI</a></li><li class="chapter-item expanded "><a href="ffi/usage.html"><strong aria-hidden="true">14.2.</strong> Usage</a></li><li class="chapter-item expanded "><a href="ffi/supported_types.html"><strong aria-hidden="true">14.3.</strong> Supported Types</a></li></ol></li><li class="chapter-item expanded "><a href="enviromentvariables.html"><strong aria-hidden="true">15.</strong> Environment variables</a></li><li class="chapter-item expanded "><a href="transpiler.html"><strong aria-hidden="true">16.</strong> Transpiler</a></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu (default)</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Bun Runtime</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h2 id="install"><a class="header" href="#install">Install</a></h2>
+<p>Native: (macOS x64 &amp; Silicon, Linux x64, Windows Subsystem for Linux)</p>
+<pre><code class="language-sh">curl -fsSL https://bun.sh/install | bash
+</code></pre>
+<p>Docker: (Linux x64)</p>
+<pre><code class="language-sh">docker pull jarredsumner/bun:edge
+docker run --rm --init --ulimit memlock=-1:-1 jarredsumner/bun:edge
+</code></pre>
+<p>If using Linux, kernel version 5.6 or higher is strongly recommended, but the minimum is 5.1.</p>
+<div style="break-before: page; page-break-before: always;"></div><h2 id="using-bunjs---a-new-javascript-runtime-environment"><a class="header" href="#using-bunjs---a-new-javascript-runtime-environment">Using bun.js - a new JavaScript runtime environment</a></h2>
+<p>bun.js focuses on performance, developer experience and compatibility with the JavaScript ecosystem.</p>
+<pre><code class="language-ts">// http.ts
+export default {
+  port: 3000,
+  fetch(request: Request) {
+    return new Response(&quot;Hello World&quot;);
+  },
+};
+
+// bun ./http.ts
+</code></pre>
+<div class="table-wrapper"><table><thead><tr><th>Requests per second</th><th>OS</th><th>CPU</th><th>bun version</th></tr></thead><tbody>
+<tr><td><a href="https://twitter.com/jarredsumner/status/1512040623200616449">260,000</a></td><td>macOS</td><td>Apple Silicon M1 Max</td><td>0.0.76</td></tr>
+<tr><td><a href="https://twitter.com/jarredsumner/status/1511988933587976192">160,000</a></td><td>Linux</td><td>AMD Ryzen 5 3600 6-Core 2.2ghz</td><td>0.0.76</td></tr>
+</tbody></table>
+</div><details>
+<summary>Measured with <a target="_blank" href="https://github.com/uNetworking/uSockets/blob/master/examples/http_load_test.c">http_load_test</a></summary> by running:
+<pre><code class="language-bash">./http_load_test  20 127.0.0.1 3000
+</code></pre>
+</details>
+<p>bun.js prefers Web API compatibility instead of designing new APIs when possible. bun.js also implements some Node.js APIs.</p>
+<ul>
+<li>TypeScript &amp; JSX support is built-in, powered by Bun's JavaScript transpiler</li>
+<li>ESM &amp; CommonJS modules are supported (internally, bun.js uses ESM)</li>
+<li>Many npm packages &quot;just work&quot; with bun.js (when they use few/no node APIs)</li>
+<li>tsconfig.json <code>&quot;paths&quot;</code> is natively supported, along with <code>&quot;exports&quot;</code> in package.json</li>
+<li><code>fs</code>, <code>path</code>, and <code>process</code> from Node are partially implemented</li>
+<li>Web APIs like <a href="https://developer.mozilla.org/en-US/docs/Web/API/fetch"><code>fetch</code></a>, <a href="https://developer.mozilla.org/en-US/docs/Web/API/Response"><code>Response</code></a>, <a href="https://developer.mozilla.org/en-US/docs/Web/API/URL"><code>URL</code></a> and more are built-in</li>
+<li><a href="https://developers.cloudflare.com/workers/runtime-apis/html-rewriter/"><code>HTMLRewriter</code></a> makes it easy to transform HTML in bun.js</li>
+<li>Starts <a href="https://twitter.com/jarredsumner/status/1499225725492076544">4x faster than Node</a> (try it yourself)</li>
+<li><code>.env</code> files automatically load into <code>process.env</code> and <code>Bun.env</code></li>
+<li>top level await</li>
+</ul>
+<p>The runtime uses JavaScriptCore, the JavaScript engine powering WebKit and Safari. Some web APIs like <a href="https://developer.mozilla.org/en-US/docs/Web/API/Headers"><code>Headers</code></a> and <a href="https://developer.mozilla.org/en-US/docs/Web/API/URL"><code>URL</code></a> directly use <a href="https://github.com/oven-sh/bun/blob/HEAD/src/bun.js/bindings/webcore/JSFetchHeaders.cpp">Safari's implementation</a>.</p>
+<p><code>cat</code> clone that runs <a href="https://twitter.com/jarredsumner/status/1511707890708586496">2x faster than GNU cat</a> for large files on Linux</p>
+<pre><code class="language-js">// cat.js
+import { resolve } from &quot;path&quot;;
+import { write, stdout, file, argv } from &quot;bun&quot;;
+
+const path = resolve(argv.at(-1));
+
+await write(
+  // stdout is a Blob
+  stdout,
+  // file(path) returns a Blob - https://developer.mozilla.org/en-US/docs/Web/API/Blob
+  file(path)
+);
+
+// bun ./cat.js ./path-to-file
+</code></pre>
+<p>Server-side render React:</p>
+<pre><code class="language-js">// requires Bun v0.1.0 or later
+// react-ssr.tsx
+import { renderToReadableStream } from &quot;react-dom/server&quot;;
+
+const dt = new Intl.DateTimeFormat();
+
+export default {
+  port: 3000,
+  async fetch(request: Request) {
+    return new Response(
+      await renderToReadableStream(
+        &lt;html&gt;
+          &lt;head&gt;
+            &lt;title&gt;Hello World&lt;/title&gt;
+          &lt;/head&gt;
+          &lt;body&gt;
+            &lt;h1&gt;Hello from React!&lt;/h1&gt;
+            &lt;p&gt;The date is {dt.format(new Date())}&lt;/p&gt;
+          &lt;/body&gt;
+        &lt;/html&gt;
+      )
+    );
+  },
+};
+
+// bun react-ssr.tsx
+</code></pre>
+<p>There are some more examples in the <a href="./examples">examples</a> folder.</p>
+<p>PRs adding more examples are very welcome!</p>
+<h3 id="types-for-bunjs-editor-autocomplete"><a class="header" href="#types-for-bunjs-editor-autocomplete">Types for bun.js (editor autocomplete)</a></h3>
+<p>The best docs right now are the TypeScript types in the <a href="types/bun/bun.d.ts"><code>bun-types</code></a> npm package. A docs site is coming soon.</p>
+<p>To get autocomplete for bun.js types in your editor,</p>
+<ol>
+<li>Install the <code>bun-types</code> npm package:</li>
+</ol>
+<pre><code class="language-bash"># yarn/npm/pnpm work too, &quot;bun-types&quot; is an ordinary npm package
+bun add bun-types
+</code></pre>
+<ol start="2">
+<li>Add this to your <code>tsconfig.json</code> or <code>jsconfig.json</code>:</li>
+</ol>
+<pre><code class="language-jsonc">{
+  &quot;compilerOptions&quot;: {
+    &quot;lib&quot;: [&quot;ESNext&quot;],
+    &quot;module&quot;: &quot;esnext&quot;,
+    &quot;target&quot;: &quot;esnext&quot;,
+    // &quot;bun-types&quot; is the important part
+    &quot;types&quot;: [&quot;bun-types&quot;]
+  }
+}
+</code></pre>
+<p>You can also <a href="./types/bun/bun.d.ts">view the types here</a>.</p>
+<h3 id="fast-paths-for-web-apis"><a class="header" href="#fast-paths-for-web-apis">Fast paths for Web APIs</a></h3>
+<p>bun.js has fast paths for common use cases that make Web APIs live up to the performance demands of servers and CLIs.</p>
+<p><code>Bun.file(path)</code> returns a <a href="https://developer.mozilla.org/en-US/docs/Web/API/Blob"><code>Blob</code></a> that represents a lazily-loaded file.</p>
+<p>When you pass a file blob to <code>Bun.write</code>, Bun automatically uses a faster system call:</p>
+<pre><code class="language-js">const blob = Bun.file(&quot;input.txt&quot;);
+await Bun.write(&quot;output.txt&quot;, blob);
+</code></pre>
+<p>On Linux, this uses the <a href="https://man7.org/linux/man-pages/man2/copy_file_range.2.html"><code>copy_file_range</code></a> syscall and on macOS, this becomes <code>clonefile</code> (or <a href="https://developer.apple.com/library/archive/documentation/System/Conceptual/ManPages_iPhoneOS/man3/copyfile.3.html"><code>fcopyfile</code></a>).</p>
+<p><code>Bun.write</code> also supports <a href="https://developer.mozilla.org/en-US/docs/Web/API/Response"><code>Response</code></a> objects. It automatically converts to a <a href="https://developer.mozilla.org/en-US/docs/Web/API/Blob"><code>Blob</code></a>.</p>
+<pre><code class="language-js">// Eventually, this will stream the response to disk but today it buffers
+await Bun.write(&quot;index.html&quot;, await fetch(&quot;https://example.com&quot;));
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h2 id="using-bun-as-a-package-manager"><a class="header" href="#using-bun-as-a-package-manager">Using bun as a package manager</a></h2>
+<p>On Linux, <code>bun install</code> tends to install packages 20x - 100x faster than <code>npm install</code>. On macOS, it’s more like 4x - 80x.</p>
+<img src="https://user-images.githubusercontent.com/709451/147004342-571b6123-17a9-49a2-8bfd-dcfc5204047e.png" height="200" />
+<p>To install packages from package.json:</p>
+<pre><code class="language-bash">bun install
+</code></pre>
+<p>To add or remove packages from package.json:</p>
+<pre><code class="language-bash">bun remove react
+bun add preact
+</code></pre>
+<details> <summary><strong>For Linux users</strong>: <code>bun install</code> needs Linux Kernel 5.6 or higher to work well</summary>
+<p>The minimum Linux Kernel version is 5.1. If you're on Linux kernel 5.1 - 5.5, <code>bun install</code> should still work, but HTTP requests will be slow due to a lack of support for io_uring's <code>connect()</code> operation.</p>
+<p>If you're using Ubuntu 20.04, here's how to install a <a href="https://wiki.ubuntu.com/Kernel/LTSEnablementStack">newer kernel</a>:</p>
+<pre><code class="language-bash"># If this returns a version &gt;= 5.6, you don't need to do anything
+uname -r
+
+# Install the official Ubuntu hardware enablement kernel
+sudo apt install --install-recommends linux-generic-hwe-20.04
+</code></pre>
+</details>
+<div style="break-before: page; page-break-before: always;"></div><h2 id="using-bun-as-a-task-runner"><a class="header" href="#using-bun-as-a-task-runner">Using bun as a task runner</a></h2>
+<p>Instead of waiting 170ms for your npm client to start for each task, you wait 6ms for bun.</p>
+<p>To use bun as a task runner, run <code>bun run</code> instead of <code>npm run</code>.</p>
+<pre><code class="language-bash"># Instead of &quot;npm run clean&quot;
+bun run clean
+
+# This also works
+bun clean
+</code></pre>
+<p>Assuming a package.json with a <code>&quot;clean&quot;</code> command in <code>&quot;scripts&quot;</code>:</p>
+<pre><code class="language-json">{
+  &quot;name&quot;: &quot;myapp&quot;,
+  &quot;scripts&quot;: {
+    &quot;clean&quot;: &quot;rm -rf dist out node_modules&quot;
+  }
+}
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h2 id="creating-a-discord-bot-with-bun"><a class="header" href="#creating-a-discord-bot-with-bun">Creating a Discord bot with Bun</a></h2>
+<h3 id="application-commands"><a class="header" href="#application-commands">Application Commands</a></h3>
+<blockquote>
+<p>Application commands are native ways to interact with apps in the Discord client. There are 3 types of commands accessible in different interfaces: the chat input, a message's context menu (top-right menu or right-clicking in a message), and a user's context menu (right-clicking on a user).</p>
+</blockquote>
+<p>To get started you can use the interactions template:</p>
+<pre><code class="language-bash">bun create discord-interactions my-interactions-bot
+cd my-interactions-bot
+</code></pre>
+<p>If you don't have a Discord bot/application yet, you can create one <a href="https://discord.com/developers/applications/me">here (https://discord.com/developers/applications/me)</a>.</p>
+<p>Invite bot to your server by visiting <code>https://discord.com/api/oauth2/authorize?client_id=&lt;your_application_id&gt;&amp;scope=bot%20applications.commands</code></p>
+<p>Afterwards you will need to get your bot's token, public key, and application id from the application page and put them into <code>.env.example</code> file</p>
+<p>Then you can run the http server that will handle your interactions:</p>
+<pre><code class="language-bash">bun install
+mv .env.example .env
+
+bun run.js # listening on port 1337
+</code></pre>
+<p>Discord does not accept an insecure HTTP server, so you will need to provide an SSL certificate or put the interactions server behind a secure reverse proxy. For development, you can use ngrok/cloudflare tunnel to expose local ports as secure URL.</p>
+<h2 id="using-bun-with-nextjs"><a class="header" href="#using-bun-with-nextjs">Using bun with Next.js</a></h2>
+<p>To create a new Next.js app with bun:</p>
+<pre><code class="language-bash">bun create next ./app
+cd app
+bun dev # start dev server
+</code></pre>
+<p>To use an existing Next.js app with bun:</p>
+<pre><code class="language-bash">bun add bun-framework-next
+echo &quot;framework = 'next'&quot; &gt; bunfig.toml
+bun bun # bundle dependencies
+bun dev # start dev server
+</code></pre>
+<p>Many of Next.js’ features are supported, but not all.</p>
+<p>Here’s what doesn’t work yet:</p>
+<ul>
+<li><code>getStaticPaths</code></li>
+<li>same-origin <code>fetch</code> inside of <code>getStaticProps</code> or <code>getServerSideProps</code></li>
+<li>locales, zones, <code>assetPrefix</code> (workaround: change <code>--origin \&quot;http://localhost:3000/assetPrefixInhere\&quot;</code>)</li>
+<li><code>next/image</code> is polyfilled to a regular <code>&lt;img src&gt;</code> tag.</li>
+<li><code>proxy</code> and anything else in <code>next.config.js</code></li>
+<li>API routes, middleware (middleware is easier to support, though! Similar SSR API)</li>
+<li>styled-jsx (technically not Next.js, but often used with it)</li>
+<li>React Server Components</li>
+</ul>
+<p>When using Next.js, bun automatically reads configuration from <code>.env.local</code>, <code>.env.development</code> and <code>.env</code> (in that order). <code>process.env.NEXT_PUBLIC_</code> and <code>process.env.NEXT_</code> automatically are replaced via <code>--define</code>.</p>
+<p>Currently, any time you import new dependencies from <code>node_modules</code>, you will need to re-run <code>bun bun --use next</code>. This will eventually be automatic.</p>
+<h2 id="using-bun-with-single-page-apps"><a class="header" href="#using-bun-with-single-page-apps">Using bun with single-page apps</a></h2>
+<p>In your project folder root (where <code>package.json</code> is):</p>
+<pre><code class="language-bash">bun bun ./entry-point-1.js ./entry-point-2.jsx
+bun
+</code></pre>
+<p>By default, <code>bun</code> will look for any HTML files in the <code>public</code> directory and serve that. For browsers navigating to the page, the <code>.html</code> file extension is optional in the URL, and <code>index.html</code> will automatically rewrite for the directory.</p>
+<p>Here are examples of routing from <code>public/</code> and how they’re matched:
+| Dev Server URL | File Path |
+|----------------|-----------|
+| /dir | public/dir/index.html |
+| / | public/index.html |
+| /index | public/index.html |
+| /hi | public/hi.html |
+| /file | public/file.html |
+| /font/Inter.woff2 | public/font/Inter.woff2 |
+| /hello | public/index.html |</p>
+<p>If <code>public/index.html</code> exists, it becomes the default page instead of a 404 page, unless that pathname has a file extension.</p>
+<h3 id="using-bun-with-create-react-app"><a class="header" href="#using-bun-with-create-react-app">Using bun with Create React App</a></h3>
+<p>To create a new React app:</p>
+<pre><code class="language-bash">bun create react ./app
+cd app
+bun dev # start dev server
+</code></pre>
+<p>To use an existing React app:</p>
+<pre><code class="language-bash"># To enable React Fast Refresh, ensure it is installed
+bun add -d react-refresh
+
+# Generate a bundle for your entry point(s)
+bun bun ./src/index.js # jsx, tsx, ts also work. can be multiple files
+
+# Start the dev server
+bun dev
+</code></pre>
+<p>From there, bun relies on the filesystem for mapping dev server paths to source files. All URL paths are relative to the project root (where <code>package.json</code> is located).</p>
+<p>Here are examples of routing source code file paths:</p>
+<div class="table-wrapper"><table><thead><tr><th>Dev Server URL</th><th>File Path (relative to cwd)</th></tr></thead><tbody>
+<tr><td>/src/components/Button.tsx</td><td>src/components/Button.tsx</td></tr>
+<tr><td>/src/index.tsx</td><td>src/index.tsx</td></tr>
+<tr><td>/pages/index.js</td><td>pages/index.js</td></tr>
+</tbody></table>
+</div>
+<p>You do not need to include file extensions in <code>import</code> paths. CommonJS-style import paths without the file extension work.</p>
+<p>You can override the public directory by passing <code>--public-dir=&quot;path-to-folder&quot;</code>.</p>
+<p>If no directory is specified and <code>./public/</code> doesn’t exist, bun will try <code>./static/</code>. If <code>./static/</code> does not exist, but won’t serve from a public directory. If you pass <code>--public-dir=./</code> bun will serve from the current directory, but it will check the current directory last instead of first.</p>
+<h2 id="using-bun-with-typescript"><a class="header" href="#using-bun-with-typescript">Using bun with TypeScript</a></h2>
+<h3 id="transpiling-typescript-with-bun"><a class="header" href="#transpiling-typescript-with-bun">Transpiling TypeScript with Bun</a></h3>
+<p>TypeScript just works. There’s nothing to configure and nothing extra to install. If you import a <code>.ts</code> or <code>.tsx</code> file, bun will transpile it into JavaScript. bun also transpiles <code>node_modules</code> containing <code>.ts</code> or <code>.tsx</code> files. This is powered by bun’s TypeScript transpiler, so it’s fast.</p>
+<p>bun also reads <code>tsconfig.json</code>, including <code>baseUrl</code> and <code>paths</code>.</p>
+<h3 id="adding-type-definitions"><a class="header" href="#adding-type-definitions">Adding Type Definitions</a></h3>
+<p>To get TypeScript working with the global API, add <code>bun-types</code> to your project:</p>
+<pre><code class="language-sh">bun add -d bun-types
+</code></pre>
+<p>And to the <code>types</code> field in your <code>tsconfig.json</code>:</p>
+<pre><code class="language-json">{
+  &quot;compilerOptions&quot;: {
+    &quot;types&quot;: [&quot;bun-types&quot;]
+  }
+}
+</code></pre>
+<h2 id="not-implemented-yet"><a class="header" href="#not-implemented-yet">Not implemented yet</a></h2>
+<p>bun is a project with an incredibly large scope and is still in its early days.</p>
+<p>You can see <a href="https://github.com/oven-sh/bun/issues/159">Bun's Roadmap</a>, but here are some additional things that are planned:</p>
+<div class="table-wrapper"><table><thead><tr><th>Feature</th><th>In</th></tr></thead><tbody>
+<tr><td>Web Streams with Fetch API</td><td>bun.js</td></tr>
+<tr><td>Web Streams with HTMLRewriter</td><td>bun.js</td></tr>
+<tr><td>WebSocket Server</td><td>bun.js</td></tr>
+<tr><td>Package hoisting that matches npm behavior</td><td>bun install</td></tr>
+<tr><td>Source Maps (unbundled is supported)</td><td>JS Bundler</td></tr>
+<tr><td>Source Maps</td><td>CSS</td></tr>
+<tr><td>JavaScript Minifier</td><td>JS Transpiler</td></tr>
+<tr><td>CSS Minifier</td><td>CSS</td></tr>
+<tr><td>CSS Parser (it only bundles)</td><td>CSS</td></tr>
+<tr><td>Tree-shaking</td><td>JavaScript</td></tr>
+<tr><td>Tree-shaking</td><td>CSS</td></tr>
+<tr><td><a href="https://www.typescriptlang.org/tsconfig#extends"><code>extends</code></a> in tsconfig.json</td><td>TS Transpiler</td></tr>
+<tr><td><a href="https://www.typescriptlang.org/docs/handbook/decorators.html">TypeScript Decorators</a></td><td>TS Transpiler</td></tr>
+<tr><td><code>@jsxPragma</code> comments</td><td>JS Transpiler</td></tr>
+<tr><td>Sharing <code>.bun</code> files</td><td>bun</td></tr>
+<tr><td>Dates &amp; timestamps</td><td>TOML parser</td></tr>
+<tr><td><a href="https://github.com/oven-sh/bun/issues/18">Hash components for Fast Refresh</a></td><td>JSX Transpiler</td></tr>
+</tbody></table>
+</div><small>
+JS Transpiler == JavaScript Transpiler
+<br/>
+TS Transpiler == TypeScript Transpiler
+<br/>
+Package manager == <code>bun install</code>
+<br/>
+bun.js == bun’s JavaScriptCore integration that executes JavaScript. Similar to how Node.js & Deno embed V8.
+</small>
+<div style="break-before: page; page-break-before: always;"></div><h2 id="limitations--intended-usage"><a class="header" href="#limitations--intended-usage">Limitations &amp; intended usage</a></h2>
+<p>Today, bun is mostly focused on bun.js: the JavaScript runtime.</p>
+<p>While you could use bun's bundler &amp; transpiler separately to build for browsers or node, bun doesn't have a minifier or support tree-shaking yet. For production browser builds, you probably should use a tool like esbuild or swc.</p>
+<p>Longer-term, bun intends to replace Node.js, Webpack, Babel, yarn, and PostCSS (in production).</p>
+<h2 id="upcoming-breaking-changes"><a class="header" href="#upcoming-breaking-changes">Upcoming breaking changes</a></h2>
+<ul>
+<li>Bun's CLI flags will change to better support bun as a JavaScript runtime. They were chosen when bun was just a frontend development tool.</li>
+<li>Bun's bundling format will change to accommodate production browser bundles and on-demand production bundling</li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div><h2 id="configuration"><a class="header" href="#configuration">Configuration</a></h2>
+<h3 id="bunfigtoml"><a class="header" href="#bunfigtoml">bunfig.toml</a></h3>
+<p>bunfig.toml is bun's configuration file.</p>
+<p>It lets you load configuration from a file instead of passing flags to the CLI each time. The config file is loaded before CLI arguments are parsed, which means CLI arguments can override them.</p>
+<p>Here is an example:</p>
+<pre><code class="language-toml"># Set a default framework to use
+# By default, bun will look for an npm package like `bun-framework-${framework}`, followed by `${framework}`
+framework = &quot;next&quot;
+logLevel = &quot;debug&quot;
+
+# publicDir = &quot;public&quot;
+# external = [&quot;jquery&quot;]
+
+[macros]
+# Remap any import like this:
+#     import {graphql} from 'react-relay';
+# To:
+#     import {graphql} from 'macro:bun-macro-relay';
+react-relay = { &quot;graphql&quot; = &quot;bun-macro-relay&quot; }
+
+[bundle]
+saveTo = &quot;node_modules.bun&quot;
+# Don't need this if `framework` is set, but showing it here as an example anyway
+entryPoints = [&quot;./app/index.ts&quot;]
+
+[bundle.packages]
+# If you're bundling packages that do not actually live in a `node_modules` folder or do not have the full package name in the file path, you can pass this to bundle them anyway
+&quot;@bigapp/design-system&quot; = true
+
+[dev]
+# Change the default port from 3000 to 5000
+# Also inherited by Bun.serve
+port = 5000
+
+[define]
+# Replace any usage of &quot;process.env.bagel&quot; with the string `lox`.
+# The values are parsed as JSON, except single-quoted strings are supported and `'undefined'` becomes `undefined` in JS.
+# This will probably change in a future release to be just regular TOML instead. It is a holdover from the CLI argument parsing.
+&quot;process.env.bagel&quot; = &quot;'lox'&quot;
+
+[loaders]
+# When loading a .bagel file, run the JS parser
+&quot;.bagel&quot; = &quot;js&quot;
+
+[debug]
+# When navigating to a blob: or src: link, open the file in your editor
+# If not, it tries $EDITOR or $VISUAL
+# If that still fails, it will try Visual Studio Code, then Sublime Text, then a few others
+# This is used by Bun.openInEditor()
+editor = &quot;code&quot;
+
+# List of editors:
+# - &quot;subl&quot;, &quot;sublime&quot;
+# - &quot;vscode&quot;, &quot;code&quot;
+# - &quot;textmate&quot;, &quot;mate&quot;
+# - &quot;idea&quot;
+# - &quot;webstorm&quot;
+# - &quot;nvim&quot;, &quot;neovim&quot;
+# - &quot;vim&quot;,&quot;vi&quot;
+# - &quot;emacs&quot;
+# - &quot;atom&quot;
+# If you pass it a file path, it will open with the file path instead
+# It will recognize non-GUI editors, but I don't think it will work yet
+</code></pre>
+<p>TODO: list each property name</p>
+<h5 id="when-platform-is-browser"><a class="header" href="#when-platform-is-browser">When <code>platform</code> is <code>browser</code></a></h5>
+<pre><code class="language-js">globalThis.document?.dispatchEvent(
+  new CustomEvent(&quot;onimportcss&quot;, {
+    detail: &quot;http://localhost:3000/styles/globals.css&quot;,
+  })
+);
+</code></pre>
+<p>An event handler for turning that into a <code>&lt;link&gt;</code> is automatically registered when HMR is enabled. That event handler can be turned off either in a framework’s <code>package.json</code> or by setting <code>globalThis[&quot;Bun_disableCSSImports&quot;] = true;</code> in client-side code. Additionally, you can get a list of every .css file imported this way via <code>globalThis[&quot;__BUN&quot;].allImportedStyles</code>.</p>
+<h5 id="when-platform-is-bun"><a class="header" href="#when-platform-is-bun">When <code>platform</code> is <code>bun</code></a></h5>
+<pre><code class="language-js">//@import url(&quot;http://localhost:3000/styles/globals.css&quot;);
+</code></pre>
+<p>Additionally, bun exposes an API for SSR/SSG that returns a flat list of URLs to css files imported. That function is <code>Bun.getImportedStyles()</code>.</p>
+<pre><code class="language-ts">// This specifically is for &quot;framework&quot; in package.json when loaded via `bun dev`
+// This API needs to be changed somewhat to work more generally with Bun.js
+// Initially, you could only use bun.js through `bun dev`
+// and this API was created at that time
+addEventListener(&quot;fetch&quot;, async (event: FetchEvent) =&gt; {
+  var route = Bun.match(event);
+  const App = await import(&quot;pages/_app&quot;);
+
+  // This returns all .css files that were imported in the line above.
+  // It’s recursive, so any file that imports a CSS file will be included.
+  const appStylesheets = bun.getImportedStyles();
+
+  // ...rest of code
+});
+</code></pre>
+<p>This is useful for preventing flash of unstyled content.</p>
+<div style="break-before: page; page-break-before: always;"></div><h2 id="loaders"><a class="header" href="#loaders">Loaders</a></h2>
+<p>A loader determines how to map imports &amp; file extensions to transforms and output.</p>
+<p>Currently, bun implements the following loaders:</p>
+<div class="table-wrapper"><table><thead><tr><th>Input</th><th>Loader</th><th>Output</th></tr></thead><tbody>
+<tr><td>.js</td><td>JSX + JavaScript</td><td>.js</td></tr>
+<tr><td>.jsx</td><td>JSX + JavaScript</td><td>.js</td></tr>
+<tr><td>.ts</td><td>TypeScript + JavaScript</td><td>.js</td></tr>
+<tr><td>.tsx</td><td>TypeScript + JSX + JavaScript</td><td>.js</td></tr>
+<tr><td>.mjs</td><td>JavaScript</td><td>.js</td></tr>
+<tr><td>.cjs</td><td>JavaScript</td><td>.js</td></tr>
+<tr><td>.mts</td><td>TypeScript</td><td>.js</td></tr>
+<tr><td>.cts</td><td>TypeScript</td><td>.js</td></tr>
+<tr><td>.toml</td><td>TOML</td><td>.js</td></tr>
+<tr><td>.css</td><td>CSS</td><td>.css</td></tr>
+<tr><td>.env</td><td>Env</td><td>N/A</td></tr>
+<tr><td>.*</td><td>file</td><td>string</td></tr>
+</tbody></table>
+</div>
+<p>Everything else is treated as <code>file</code>. <code>file</code> replaces the import with a URL (or a path).</p>
+<p>You can configure which loaders map to which extensions by passing <code>--loaders</code> to <code>bun</code>. For example:</p>
+<pre><code class="language-sh">bun --loader=.js:js
+</code></pre>
+<p>This will disable JSX transforms for <code>.js</code> files.</p>
+<div style="break-before: page; page-break-before: always;"></div><h3 id="css-in-js"><a class="header" href="#css-in-js">CSS in JS</a></h3>
+<p>When importing CSS in JavaScript-like loaders, CSS is treated special.</p>
+<p>By default, bun will transform a statement like this:</p>
+<pre><code class="language-js">import &quot;../styles/global.css&quot;;
+</code></pre>
+<h3 id="css-loader"><a class="header" href="#css-loader">CSS Loader</a></h3>
+<p>bun bundles <code>.css</code> files imported via <code>@import</code> into a single file. It doesn’t autoprefix or minify CSS today. Multiple <code>.css</code> files imported in one JavaScript file will <em>not</em> be bundled into one file. You’ll have to import those from a <code>.css</code> file.</p>
+<p>This input:</p>
+<pre><code class="language-css">@import url(&quot;./hi.css&quot;);
+@import url(&quot;./hello.css&quot;);
+@import url(&quot;./yo.css&quot;);
+</code></pre>
+<p>Becomes:</p>
+<pre><code class="language-css">/* hi.css */
+/* ...contents of hi.css */
+/* hello.css */
+/* ...contents of hello.css */
+/* yo.css */
+/* ...contents of yo.css */
+</code></pre>
+<h3 id="css-runtime"><a class="header" href="#css-runtime">CSS runtime</a></h3>
+<p>To support hot CSS reloading, bun inserts <code>@supports</code> annotations into CSS that tag which files a stylesheet is composed of. Browsers ignore this, so it doesn’t impact styles.</p>
+<p>By default, bun’s runtime code automatically listens to <code>onimportcss</code> and will insert the <code>event.detail</code> into a <code>&lt;link rel=&quot;stylesheet&quot; href={${event.detail}}&gt;</code> if there is no existing <code>link</code> tag with that stylesheet. That’s how bun’s equivalent of <code>style-loader</code> works.</p>
+<div style="break-before: page; page-break-before: always;"></div><h3 id="frameworks"><a class="header" href="#frameworks">Frameworks</a></h3>
+<blockquote>
+<p><strong>Warning</strong>
+This will soon have breaking changes. It was designed when Bun was mostly a dev server and not a JavaScript runtime.</p>
+</blockquote>
+<p>Frameworks preconfigure bun to enable developers to use bun with their existing tooling.</p>
+<p>Frameworks are configured via the <code>framework</code> object in the <code>package.json</code> of the framework (not in the application’s <code>package.json</code>):</p>
+<p>Here is an example:</p>
+<pre><code class="language-json">{
+  &quot;name&quot;: &quot;bun-framework-next&quot;,
+  &quot;version&quot;: &quot;0.0.0-18&quot;,
+  &quot;description&quot;: &quot;&quot;,
+  &quot;framework&quot;: {
+    &quot;displayName&quot;: &quot;Next.js&quot;,
+    &quot;static&quot;: &quot;public&quot;,
+    &quot;assetPrefix&quot;: &quot;_next/&quot;,
+    &quot;router&quot;: {
+      &quot;dir&quot;: [&quot;pages&quot;, &quot;src/pages&quot;],
+      &quot;extensions&quot;: [&quot;.js&quot;, &quot;.ts&quot;, &quot;.tsx&quot;, &quot;.jsx&quot;]
+    },
+    &quot;css&quot;: &quot;onimportcss&quot;,
+    &quot;development&quot;: {
+      &quot;client&quot;: &quot;client.development.tsx&quot;,
+      &quot;fallback&quot;: &quot;fallback.development.tsx&quot;,
+      &quot;server&quot;: &quot;server.development.tsx&quot;,
+      &quot;css&quot;: &quot;onimportcss&quot;,
+      &quot;define&quot;: {
+        &quot;client&quot;: {
+          &quot;.env&quot;: &quot;NEXT_PUBLIC_&quot;,
+          &quot;defaults&quot;: {
+            &quot;process.env.__NEXT_TRAILING_SLASH&quot;: &quot;false&quot;,
+            &quot;process.env.NODE_ENV&quot;: &quot;\&quot;development\&quot;&quot;,
+            &quot;process.env.__NEXT_ROUTER_BASEPATH&quot;: &quot;''&quot;,
+            &quot;process.env.__NEXT_SCROLL_RESTORATION&quot;: &quot;false&quot;,
+            &quot;process.env.__NEXT_I18N_SUPPORT&quot;: &quot;false&quot;,
+            &quot;process.env.__NEXT_HAS_REWRITES&quot;: &quot;false&quot;,
+            &quot;process.env.__NEXT_ANALYTICS_ID&quot;: &quot;null&quot;,
+            &quot;process.env.__NEXT_OPTIMIZE_CSS&quot;: &quot;false&quot;,
+            &quot;process.env.__NEXT_CROSS_ORIGIN&quot;: &quot;''&quot;,
+            &quot;process.env.__NEXT_STRICT_MODE&quot;: &quot;false&quot;,
+            &quot;process.env.__NEXT_IMAGE_OPTS&quot;: &quot;null&quot;
+          }
+        },
+        &quot;server&quot;: {
+          &quot;.env&quot;: &quot;NEXT_&quot;,
+          &quot;defaults&quot;: {
+            &quot;process.env.__NEXT_TRAILING_SLASH&quot;: &quot;false&quot;,
+            &quot;process.env.__NEXT_OPTIMIZE_FONTS&quot;: &quot;false&quot;,
+            &quot;process.env.NODE_ENV&quot;: &quot;\&quot;development\&quot;&quot;,
+            &quot;process.env.__NEXT_OPTIMIZE_IMAGES&quot;: &quot;false&quot;,
+            &quot;process.env.__NEXT_OPTIMIZE_CSS&quot;: &quot;false&quot;,
+            &quot;process.env.__NEXT_ROUTER_BASEPATH&quot;: &quot;''&quot;,
+            &quot;process.env.__NEXT_SCROLL_RESTORATION&quot;: &quot;false&quot;,
+            &quot;process.env.__NEXT_I18N_SUPPORT&quot;: &quot;false&quot;,
+            &quot;process.env.__NEXT_HAS_REWRITES&quot;: &quot;false&quot;,
+            &quot;process.env.__NEXT_ANALYTICS_ID&quot;: &quot;null&quot;,
+            &quot;process.env.__NEXT_CROSS_ORIGIN&quot;: &quot;''&quot;,
+            &quot;process.env.__NEXT_STRICT_MODE&quot;: &quot;false&quot;,
+            &quot;process.env.__NEXT_IMAGE_OPTS&quot;: &quot;null&quot;,
+            &quot;global&quot;: &quot;globalThis&quot;,
+            &quot;window&quot;: &quot;undefined&quot;
+          }
+        }
+      }
+    }
+  }
+}
+</code></pre>
+<p>Here are type definitions:</p>
+<pre><code class="language-ts">type Framework = Environment &amp; {
+  // This changes what’s printed in the console on load
+  displayName?: string;
+
+  // This allows a prefix to be added (and ignored) to requests.
+  // Useful for integrating an existing framework that expects internal routes to have a prefix
+  // e.g. &quot;_next&quot;
+  assetPrefix?: string;
+
+  development?: Environment;
+  production?: Environment;
+
+  // The directory used for serving unmodified assets like fonts and images
+  // Defaults to &quot;public&quot; if exists, else &quot;static&quot;, else disabled.
+  static?: string;
+
+  // &quot;onimportcss&quot; disables the automatic &quot;onimportcss&quot; feature
+  // If the framework does routing, you may want to handle CSS manually
+  // &quot;facade&quot; removes CSS imports from JavaScript files,
+  //    and replaces an imported object with a proxy that mimics CSS module support without doing any class renaming.
+  css?: &quot;onimportcss&quot; | &quot;facade&quot;;
+
+  // bun’s filesystem router
+  router?: Router;
+};
+
+type Define = {
+  // By passing &quot;.env&quot;, bun will automatically load .env.local, .env.development, and .env if exists in the project root
+  //    (in addition to the processes’ environment variables)
+  // When &quot;*&quot;, all environment variables will be automatically injected into the JavaScript loader
+  // When a string like &quot;NEXT_PUBLIC_&quot;, only environment variables starting with that prefix will be injected
+
+  &quot;.env&quot;: string | &quot;*&quot;;
+
+  // These environment variables will be injected into the JavaScript loader
+  // These are the equivalent of Webpack’s resolve.alias and esbuild’s --define.
+  // Values are parsed as JSON, so they must be valid JSON. The only exception is '' is a valid string, to simplify writing stringified JSON in JSON.
+  // If not set, `process.env.NODE_ENV` will be transformed into &quot;development&quot;.
+  defaults: Record&lt;string, string&gt;;
+};
+
+type Environment = {
+  // This is a wrapper for the client-side entry point for a route.
+  // This allows frameworks to run initialization code on pages.
+  client: string;
+  // This is a wrapper for the server-side entry point for a route.
+  // This allows frameworks to run initialization code on pages.
+  server: string;
+  // This runs when &quot;server&quot; code fails to load due to an exception.
+  fallback: string;
+
+  // This is how environment variables and .env is configured.
+  define?: Define;
+};
+
+// bun’s filesystem router
+// Currently, bun supports pages by either an absolute match or a parameter match.
+// pages/index.tsx will be executed on navigation to &quot;/&quot; and &quot;/index&quot;
+// pages/posts/[id].tsx will be executed on navigation to &quot;/posts/123&quot;
+// Routes &amp; parameters are automatically passed to `fallback` and `server`.
+type Router = {
+  // This determines the folder to look for pages
+  dir: string[];
+
+  // These are the allowed file extensions for pages.
+  extensions?: string[];
+};
+</code></pre>
+<p>To use a framework, you pass <code>bun bun --use package-name</code>.</p>
+<p>Your framework’s <code>package.json</code> <code>name</code> should start with <code>bun-framework-</code>. This is so that people can type something like <code>bun bun --use next</code> and it will check <code>bun-framework-next</code> first. This is similar to how Babel plugins tend to start with <code>babel-plugin-</code>.</p>
+<p>For developing frameworks, you can also do <code>bun bun --use ./relative-path-to-framework</code>.</p>
+<p>If you’re interested in adding a framework integration, please reach out. There’s a lot here, and it’s not entirely documented yet.</p>
+<div style="break-before: page; page-break-before: always;"></div><h2 id="troubleshooting"><a class="header" href="#troubleshooting">Troubleshooting</a></h2>
+<h3 id="bun-not-running-on-an-m1-or-apple-silicon"><a class="header" href="#bun-not-running-on-an-m1-or-apple-silicon">bun not running on an M1 (or Apple Silicon)</a></h3>
+<p>If you see a message like this</p>
+<blockquote>
+<p>[1] 28447 killed bun create next ./test</p>
+</blockquote>
+<p>It most likely means you’re running bun’s x64 version on Apple Silicon. This happens if bun is running via Rosetta. Rosetta is unable to emulate AVX2 instructions, which bun indirectly uses.</p>
+<p>The fix is to ensure you installed a version of bun built for Apple Silicon.</p>
+<h3 id="error-unexpected"><a class="header" href="#error-unexpected">error: Unexpected</a></h3>
+<p>If you see an error like this:</p>
+<p><img src="https://user-images.githubusercontent.com/709451/141210854-89434678-d21b-42f4-b65a-7df3b785f7b9.png" alt="image" /></p>
+<p>It usually means the max number of open file descriptors is being explicitly set to a low number. By default, bun requests the max number of file descriptors available (which on macOS, is something like 32,000). But, if you previously ran into ulimit issues with, e.g., Chokidar, someone on The Internet may have advised you to run <code>ulimit -n 8096</code>.</p>
+<p>That advice unfortunately <strong>lowers</strong> the hard limit to <code>8096</code>. This can be a problem in large repositories or projects with lots of dependencies. Chokidar (and other watchers) don’t seem to call <code>setrlimit</code>, which means they’re reliant on the (much lower) soft limit.</p>
+<p>To fix this issue:</p>
+<ol>
+<li>Remove any scripts that call <code>ulimit -n</code> and restart your shell.</li>
+<li>Try again, and if the error still occurs, try setting <code>ulimit -n</code> to an absurdly high number, such as <code>ulimit -n 2147483646</code></li>
+<li>Try again, and if that still doesn’t fix it, open an issue</li>
+</ol>
+<h3 id="unzip-is-required"><a class="header" href="#unzip-is-required">Unzip is required</a></h3>
+<p>Unzip is required to install bun on Linux. You can use one of the following commands to install <code>unzip</code>:</p>
+<h4 id="debian--ubuntu--mint"><a class="header" href="#debian--ubuntu--mint">Debian / Ubuntu / Mint</a></h4>
+<pre><code class="language-sh">sudo apt install unzip
+</code></pre>
+<h4 id="redhat--centos--fedora"><a class="header" href="#redhat--centos--fedora">RedHat / CentOS / Fedora</a></h4>
+<pre><code class="language-sh">sudo dnf install unzip
+</code></pre>
+<h4 id="arch--manjaro"><a class="header" href="#arch--manjaro">Arch / Manjaro</a></h4>
+<pre><code class="language-sh">sudo pacman -S unzip
+</code></pre>
+<h4 id="opensuse"><a class="header" href="#opensuse">OpenSUSE</a></h4>
+<pre><code class="language-sh">sudo zypper install unzip
+</code></pre>
+<h3 id="bun-install-is-stuck"><a class="header" href="#bun-install-is-stuck">bun install is stuck</a></h3>
+<p>Please run <code>bun install --verbose 2&gt; logs.txt</code> and send them to me in bun's discord. If you're on Linux, it would also be helpful if you run <code>sudo perf trace bun install --silent</code> and attach the logs.</p>
+<div style="break-before: page; page-break-before: always;"></div><h2 id="reference"><a class="header" href="#reference">Reference</a></h2>
+<h3 id="bun-install"><a class="header" href="#bun-install"><code>bun install</code></a></h3>
+<p>bun install is a fast package manager &amp; npm client.</p>
+<p>bun install can be configured via <code>bunfig.toml</code>, environment variables, and CLI flags.</p>
+<h4 id="configuring-bun-install-with-bunfigtoml"><a class="header" href="#configuring-bun-install-with-bunfigtoml">Configuring bun install with <code>bunfig.toml</code></a></h4>
+<p><code>bunfig.toml</code> is searched for in the following paths on <code>bun install</code>, <code>bun remove</code>, and <code>bun add</code>:</p>
+<ol>
+<li><code>$XDG_CONFIG_HOME/.bunfig.toml</code> or <code>$HOME/.bunfig.toml</code></li>
+<li><code>./bunfig.toml</code></li>
+</ol>
+<p><sup>If both are found, the results are merged together.</sup></p>
+<p>Configuring with <code>bunfig.toml</code> is optional. bun tries to be zero configuration in general, but that's not always possible.</p>
+<pre><code class="language-toml"># Using scoped packages with bun install
+[install.scopes]
+
+# Scope name      The value can be a URL string or an object
+&quot;@mybigcompany&quot; = { token = &quot;123456&quot;, url = &quot;https://registry.mybigcompany.com&quot; }
+# URL is optional and fallsback to the default registry
+
+# The &quot;@&quot; in the scope is optional
+mybigcompany2 = { token = &quot;123456&quot; }
+
+# Environment variables can be referenced as a string that starts with $ and it will be replaced
+mybigcompany3 = { token = &quot;$npm_config_token&quot; }
+
+# Setting username and password turns it into a Basic Auth header by taking base64(&quot;username:password&quot;)
+mybigcompany4 = { username = &quot;myusername&quot;, password = &quot;$npm_config_password&quot;, url = &quot;https://registry.yarnpkg.com/&quot; }
+# You can set username and password in the registry URL. This is the same as above.
+mybigcompany5 = &quot;https://username:password@registry.yarnpkg.com/&quot;
+
+# You can set a token for a registry URL:
+mybigcompany6 = &quot;https://:$NPM_CONFIG_TOKEN@registry.yarnpkg.com/&quot;
+
+[install]
+# Default registry
+# can be a URL string or an object
+registry = &quot;https://registry.yarnpkg.com/&quot;
+# as an object
+#registry = { url = &quot;https://registry.yarnpkg.com/&quot;, token = &quot;123456&quot; }
+
+# Install for production? This is the equivalent to the &quot;--production&quot; CLI argument
+production = false
+
+# Don't actually install
+dryRun = true
+
+# Install optionalDependencies (default: true)
+optional = true
+
+# Install local devDependencies (default: true)
+dev = true
+
+# Install peerDependencies (default: false)
+peer = false
+
+# When using `bun install -g`, install packages here
+globalDir = &quot;~/.bun/install/global&quot;
+
+# When using `bun install -g`, link package bins here
+globalBinDir = &quot;~/.bun/bin&quot;
+
+# cache-related configuration
+[install.cache]
+# The directory to use for the cache
+dir = &quot;~/.bun/install/cache&quot;
+
+# Don't load from the global cache.
+# Note: bun may still write to node_modules/.cache
+disable = false
+
+# Always resolve the latest versions from the registry
+disableManifest = false
+
+
+# Lockfile-related configuration
+[install.lockfile]
+
+# Print a yarn v1 lockfile
+# Note: it does not load the lockfile, it just converts bun.lockb into a yarn.lock
+print = &quot;yarn&quot;
+
+# Path to read bun.lockb from
+path = &quot;bun.lockb&quot;
+
+# Path to save bun.lockb to
+savePath = &quot;bun.lockb&quot;
+
+# Save the lockfile to disk
+save = true
+
+</code></pre>
+<p>If it's easier to read as TypeScript types:</p>
+<pre><code class="language-ts">export interface Root {
+  install: Install;
+}
+
+export interface Install {
+  scopes: Scopes;
+  registry: Registry;
+  production: boolean;
+  dryRun: boolean;
+  optional: boolean;
+  dev: boolean;
+  peer: boolean;
+  globalDir: string;
+  globalBinDir: string;
+  cache: Cache;
+  lockfile: Lockfile;
+  logLevel: &quot;debug&quot; | &quot;error&quot; | &quot;warn&quot;;
+}
+
+type Registry =
+  | string
+  | {
+      url?: string;
+      token?: string;
+      username?: string;
+      password?: string;
+    };
+
+type Scopes = Record&lt;string, Registry&gt;;
+
+export interface Cache {
+  dir: string;
+  disable: boolean;
+  disableManifest: boolean;
+}
+
+export interface Lockfile {
+  print?: &quot;yarn&quot;;
+  path: string;
+  savePath: string;
+  save: boolean;
+}
+</code></pre>
+<h4 id="configuring-with-environment-variables"><a class="header" href="#configuring-with-environment-variables">Configuring with environment variables</a></h4>
+<p>Environment variables have a higher priority than <code>bunfig.toml</code>.</p>
+<div class="table-wrapper"><table><thead><tr><th>Name</th><th>Description</th></tr></thead><tbody>
+<tr><td>BUN_CONFIG_REGISTRY</td><td>Set an npm registry (default: <a href="https://registry.npmjs.org">https://registry.npmjs.org</a>)</td></tr>
+<tr><td>BUN_CONFIG_TOKEN</td><td>Set an auth token (currently does nothing)</td></tr>
+<tr><td>BUN_CONFIG_LOCKFILE_SAVE_PATH</td><td>File path to save the lockfile to (default: bun.lockb)</td></tr>
+<tr><td>BUN_CONFIG_YARN_LOCKFILE</td><td>Save a Yarn v1-style yarn.lock</td></tr>
+<tr><td>BUN_CONFIG_LINK_NATIVE_BINS</td><td>Point <code>bin</code> in package.json to a platform-specific dependency</td></tr>
+<tr><td>BUN_CONFIG_SKIP_SAVE_LOCKFILE</td><td>Don’t save a lockfile</td></tr>
+<tr><td>BUN_CONFIG_SKIP_LOAD_LOCKFILE</td><td>Don’t load a lockfile</td></tr>
+<tr><td>BUN_CONFIG_SKIP_INSTALL_PACKAGES</td><td>Don’t install any packages</td></tr>
+</tbody></table>
+</div>
+<p>bun always tries to use the fastest available installation method for the target platform. On macOS, that’s <code>clonefile</code> and on Linux, that’s <code>hardlink</code>. You can change which installation method is used with the <code>--backend</code> flag. When unavailable or on error, <code>clonefile</code> and <code>hardlink</code> fallsback to a platform-specific implementation of copying files.</p>
+<p>bun stores installed packages from npm in <code>~/.bun/install/cache/${name}@${version}</code>. Note that if the semver version has a <code>build</code> or a <code>pre</code> tag, it is replaced with a hash of that value instead. This is to reduce the chances of errors from long file paths, but unfortunately complicates figuring out where a package was installed on disk.</p>
+<p>When the <code>node_modules</code> folder exists, before installing, bun checks if the <code>&quot;name&quot;</code> and <code>&quot;version&quot;</code> in <code>package/package.json</code> in the expected node_modules folder matches the expected <code>name</code> and <code>version</code>. This is how it determines whether it should install. It uses a custom JSON parser which stops parsing as soon as it finds <code>&quot;name&quot;</code> and <code>&quot;version&quot;</code>.</p>
+<p>When a <code>bun.lockb</code> doesn’t exist or <code>package.json</code> has changed dependencies, tarballs are downloaded &amp; extracted eagerly while resolving.</p>
+<p>When a <code>bun.lockb</code> exists and <code>package.json</code> hasn’t changed, bun downloads missing dependencies lazily. If the package with a matching <code>name</code> &amp; <code>version</code> already exists in the expected location within <code>node_modules</code>, bun won’t attempt to download the tarball.</p>
+<h4 id="platform-specific-dependencies"><a class="header" href="#platform-specific-dependencies">Platform-specific dependencies?</a></h4>
+<p>bun stores normalized <code>cpu</code> and <code>os</code> values from npm in the lockfile, along with the resolved packages. It skips downloading, extracting, and installing packages disabled for the current target at runtime. This means the lockfile won’t change between platforms/architectures even if the packages ultimately installed do change.</p>
+<h4 id="peer-dependencies"><a class="header" href="#peer-dependencies">Peer dependencies?</a></h4>
+<p>Peer dependencies are handled similarly to yarn. <code>bun install</code> does not automatically install peer dependencies and will try to choose an existing dependency.</p>
+<h4 id="lockfile"><a class="header" href="#lockfile">Lockfile</a></h4>
+<p><code>bun.lockb</code> is bun’s binary lockfile format.</p>
+<h4 id="why-is-it-binary"><a class="header" href="#why-is-it-binary">Why is it binary?</a></h4>
+<p>In a word: Performance. bun’s lockfile saves &amp; loads incredibly quickly, and saves a lot more data than what is typically inside lockfiles.</p>
+<h4 id="how-do-i-inspect-it"><a class="header" href="#how-do-i-inspect-it">How do I inspect it?</a></h4>
+<p>For now, the easiest thing is to run <code>bun install -y</code>. That prints a Yarn v1-style yarn.lock file.</p>
+<h4 id="what-does-the-lockfile-store"><a class="header" href="#what-does-the-lockfile-store">What does the lockfile store?</a></h4>
+<p>Packages, metadata for those packages, the hoisted install order, dependencies for each package, what packages those dependencies resolved to, an integrity hash (if available), what each package was resolved to and which version (or equivalent).</p>
+<h4 id="why-is-it-fast"><a class="header" href="#why-is-it-fast">Why is it fast?</a></h4>
+<p>It uses linear arrays for all data. <a href="https://github.com/oven-sh/bun/blob/be03fc273a487ac402f19ad897778d74b6d72963/src/install/install.zig#L1825">Packages</a> are referenced by an auto-incrementing integer ID or a hash of the package name. Strings longer than 8 characters are de-duplicated. Prior to saving on disk, the lockfile is garbage-collected &amp; made deterministic by walking the package tree and cloning the packages in dependency order.</p>
+<h4 id="cache"><a class="header" href="#cache">Cache</a></h4>
+<p>To delete the cache:</p>
+<pre><code class="language-bash">rm -rf ~/.bun/install/cache
+</code></pre>
+<h4 id="npm-registry-metadata"><a class="header" href="#npm-registry-metadata">npm registry metadata</a></h4>
+<p>bun uses a binary format for caching NPM registry responses. This loads much faster than JSON and tends to be smaller on disk.
+You will see these files in <code>~/.bun/install/cache/*.npm</code>. The filename pattern is <code>${hash(packageName)}.npm</code>. It’s a hash so that extra directories don’t need to be created for scoped packages.</p>
+<p>bun’s usage of <code>Cache-Control</code> ignores <code>Age</code>. This improves performance, but means bun may be about 5 minutes out of date to receive the latest package version metadata from npm.</p>
+<h3 id="bun-run"><a class="header" href="#bun-run"><code>bun run</code></a></h3>
+<p><code>bun run</code> is a fast <code>package.json</code> script runner. Instead of waiting 170ms for your npm client to start every time, you wait 6ms for bun.</p>
+<p>By default, <code>bun run</code> prints the script that will be invoked:</p>
+<pre><code class="language-bash">bun run clean
+$ rm -rf node_modules/.cache dist
+</code></pre>
+<p>You can disable that with <code>--silent</code></p>
+<pre><code class="language-bash">bun run --silent clean
+</code></pre>
+<p><code>bun run ${script-name}</code> runs the equivalent of <code>npm run script-name</code>. For example, <code>bun run dev</code> runs the <code>dev</code> script in <code>package.json</code>, which may sometimes spin up non-bun processes.</p>
+<p><code>bun run ${javascript-file.js}</code> will run it with bun, as long as the file doesn't have a node shebang.</p>
+<p>To print a list of <code>scripts</code>, <code>bun run</code> without additional args:</p>
+<pre><code class="language-bash"># This command
+bun run
+
+# Prints this
+hello-create-react-app scripts:
+
+bun run start
+react-scripts start
+
+bun run build
+react-scripts build
+
+bun run test
+react-scripts test
+
+bun run eject
+react-scripts eject
+
+4 scripts
+</code></pre>
+<p><code>bun run</code> automatically loads environment variables from <code>.env</code> into the shell/task. <code>.env</code> files are loaded with the same priority as the rest of bun, so that means:</p>
+<ol>
+<li><code>.env.local</code> is first</li>
+<li>if (<code>$NODE_ENV</code> === <code>&quot;production&quot;</code>) <code>.env.production</code> else <code>.env.development</code></li>
+<li><code>.env</code></li>
+</ol>
+<p>If something is unexpected there, you can run <code>bun run env</code> to get a list of environment variables.</p>
+<p>The default shell it uses is <code>bash</code>, but if that’s not found, it tries <code>sh</code> and if still not found, it tries <code>zsh</code>. This is not configurable right now, but if you care, file an issue.</p>
+<p><code>bun run</code> automatically adds any parent <code>node_modules/.bin</code> to <code>$PATH</code> and if no scripts match, it will load that binary instead. That means you can run executables from packages, too.</p>
+<pre><code class="language-bash"># If you use Relay
+bun run relay-compiler
+
+# You can also do this, but:
+# - It will only lookup packages in `node_modules/.bin` instead of `$PATH`
+# - It will start bun’s dev server if the script name doesn’t exist (`bun` starts the dev server by default)
+bun relay-compiler
+</code></pre>
+<p>To pass additional flags through to the task or executable, there are two ways:</p>
+<pre><code class="language-bash"># Explicit: include &quot;--&quot; and anything after will be added. This is the recommended way because it is more reliable.
+bun run relay-compiler -- -–help
+
+# Implicit: if you do not include &quot;--&quot;, anything *after* the script name will be passed through
+# bun flags are parsed first, which means e.g. `bun run relay-compiler --help` will print bun’s help instead of relay-compiler’s help.
+bun run relay-compiler --schema foo.graphql
+</code></pre>
+<p><code>bun run</code> supports lifecycle hooks like <code>post${task}</code> and <code>pre{task}</code>. If they exist, they will run, matching the behavior of npm clients. If the <code>pre${task}</code> fails, the next task will not be run. There is currently no flag to skip these lifecycle tasks if they exist, if you want that file an issue.</p>
+<h3 id="bun-create"><a class="header" href="#bun-create"><code>bun create</code></a></h3>
+<p><code>bun create</code> is a fast way to create a new project from a template.</p>
+<p>At the time of writing, <code>bun create react app</code> runs ~11x faster on my local computer than <code>yarn create react-app app</code>. <code>bun create</code> currently does no caching (though your npm client does)</p>
+<h4 id="usage"><a class="header" href="#usage">Usage</a></h4>
+<p>Create a new Next.js project:</p>
+<pre><code class="language-bash">bun create next ./app
+</code></pre>
+<p>Create a new React project:</p>
+<pre><code class="language-bash">bun create react ./app
+</code></pre>
+<p>Create from a GitHub repo:</p>
+<pre><code class="language-bash">bun create ahfarmer/calculator ./app
+</code></pre>
+<p>To see a list of examples, run:</p>
+<pre><code class="language-bash">bun create
+</code></pre>
+<p>Format:</p>
+<pre><code class="language-bash">bun create github-user/repo-name destination
+bun create local-example-or-remote-example destination
+bun create /absolute/path/to-template-folder destination
+bun create https://github.com/github-user/repo-name destination
+bun create github.com/github-user/repo-name destination
+</code></pre>
+<p>Note: you don’t need <code>bun create</code> to use bun. You don’t need any configuration at all. This command exists to make it a little easier.</p>
+<h4 id="local-templates"><a class="header" href="#local-templates">Local templates</a></h4>
+<p>If you have your own boilerplate you prefer using, copy it into <code>$HOME/.bun-create/my-boilerplate-name</code>.</p>
+<p>Before checking bun’s examples folder, <code>bun create</code> checks for a local folder matching the input in:</p>
+<ul>
+<li><code>$BUN_CREATE_DIR/</code></li>
+<li><code>$HOME/.bun-create/</code></li>
+<li><code>$(pwd)/.bun-create/</code></li>
+</ul>
+<p>If a folder exists in any of those folders with the input, bun will use that instead of a remote template.</p>
+<p>To create a local template, run:</p>
+<pre><code class="language-bash">mkdir -p $HOME/.bun-create/new-template-name
+echo '{&quot;name&quot;:&quot;new-template-name&quot;}' &gt; $HOME/.bun-create/new-template-name/package.json
+</code></pre>
+<p>This lets you run:</p>
+<pre><code class="language-bash">bun create new-template-name ./app
+</code></pre>
+<p>Now your new template should appear when you run:</p>
+<pre><code class="language-bash">bun create
+</code></pre>
+<p>Warning: unlike with remote templates, <strong>bun will delete the entire destination folder if it already exists.</strong></p>
+<h4 id="flags"><a class="header" href="#flags">Flags</a></h4>
+<div class="table-wrapper"><table><thead><tr><th>Flag</th><th>Description</th></tr></thead><tbody>
+<tr><td>--npm</td><td>Use <code>npm</code> for tasks &amp; install</td></tr>
+<tr><td>--yarn</td><td>Use <code>yarn</code> for tasks &amp; install</td></tr>
+<tr><td>--pnpm</td><td>Use <code>pnpm</code> for tasks &amp; install</td></tr>
+<tr><td>--force</td><td>Overwrite existing files</td></tr>
+<tr><td>--no-install</td><td>Skip installing <code>node_modules</code> &amp; tasks</td></tr>
+<tr><td>--no-git</td><td>Don’t initialize a git repository</td></tr>
+<tr><td>--open</td><td>Start &amp; open in-browser after finish</td></tr>
+</tbody></table>
+</div><div class="table-wrapper"><table><thead><tr><th>Environment Variables</th><th>Description</th></tr></thead><tbody>
+<tr><td>GITHUB_API_DOMAIN</td><td>If you’re using a GitHub enterprise or a proxy, you can change what the endpoint requests to GitHub go</td></tr>
+<tr><td>GITHUB_API_TOKEN</td><td>This lets <code>bun create</code> work with private repositories or if you get rate-limited</td></tr>
+</tbody></table>
+</div>
+<p>By default, <code>bun create</code> will cancel if there are existing files it would overwrite and it's a remote template. You can pass <code>--force</code> to disable this behavior.</p>
+<h4 id="publishing-a-new-template"><a class="header" href="#publishing-a-new-template">Publishing a new template</a></h4>
+<p>Clone this repository and a new folder in <code>examples/</code> with your new template. The <code>package.json</code> must have a <code>name</code> that starts with <code>@bun-examples/</code>. Do not worry about publishing it, that will happen automatically after the PR is merged.</p>
+<p>Make sure to include a <code>.gitignore</code> that includes <code>node_modules</code> so that <code>node_modules</code> aren’t checked in to git when people download the template.</p>
+<h4 id="testing-your-new-template"><a class="header" href="#testing-your-new-template">Testing your new template</a></h4>
+<p>To test your new template, add it as a local template or pass the absolute path.</p>
+<pre><code class="language-bash">bun create /path/to/my/new/template destination-dir
+</code></pre>
+<p>Warning: <strong>This will always delete everything in destination-dir</strong>.</p>
+<h4 id="config"><a class="header" href="#config">Config</a></h4>
+<p>The <code>bun-create</code> section of <code>package.json</code> is automatically removed from the <code>package.json</code> on disk. This lets you add create-only steps without waiting for an extra package to install.</p>
+<p>There are currently two options:</p>
+<ul>
+<li><code>postinstall</code></li>
+<li><code>preinstall</code></li>
+</ul>
+<p>They can be an array of strings or one string. An array of steps will be executed in order.</p>
+<p>Here is an example:</p>
+<pre><code class="language-json">{
+  &quot;name&quot;: &quot;@bun-examples/next&quot;,
+  &quot;version&quot;: &quot;0.0.31&quot;,
+  &quot;main&quot;: &quot;index.js&quot;,
+  &quot;dependencies&quot;: {
+    &quot;next&quot;: &quot;11.1.2&quot;,
+    &quot;react&quot;: &quot;^17.0.2&quot;,
+    &quot;react-dom&quot;: &quot;^17.0.2&quot;,
+    &quot;react-is&quot;: &quot;^17.0.2&quot;
+  },
+  &quot;devDependencies&quot;: {
+    &quot;@types/react&quot;: &quot;^17.0.19&quot;,
+    &quot;bun-framework-next&quot;: &quot;^0.0.0-21&quot;,
+    &quot;typescript&quot;: &quot;^4.3.5&quot;
+  },
+  &quot;bun-create&quot;: {
+    &quot;postinstall&quot;: [&quot;bun bun --use next&quot;]
+  }
+}
+</code></pre>
+<p>By default, all commands run inside the environment exposed by the auto-detected npm client. This incurs a significant performance penalty, something like 150ms spent waiting for the npm client to start on each invocation.</p>
+<p>Any command that starts with <code>&quot;bun &quot;</code> will be run without npm, relying on the first <code>bun</code> binary in <code>$PATH</code>.</p>
+<h4 id="how-bun-create-works"><a class="header" href="#how-bun-create-works">How <code>bun create</code> works</a></h4>
+<p>When you run <code>bun create ${template} ${destination}</code>, here’s what happens:</p>
+<p>IF remote template</p>
+<ol>
+<li>
+<p>GET <code>registry.npmjs.org/@bun-examples/${template}/latest</code> and parse it</p>
+</li>
+<li>
+<p>GET <code>registry.npmjs.org/@bun-examples/${template}/-/${template}-${latestVersion}.tgz</code></p>
+</li>
+<li>
+<p>Decompress &amp; extract <code>${template}-${latestVersion}.tgz</code> into <code>${destination}</code></p>
+<ul>
+<li>If there are files that would overwrite, warn and exit unless <code>--force</code> is passed</li>
+</ul>
+</li>
+</ol>
+<p>IF GitHub repo</p>
+<ol>
+<li>
+<p>Download the tarball from GitHub’s API</p>
+</li>
+<li>
+<p>Decompress &amp; extract into <code>${destination}</code></p>
+<ul>
+<li>If there are files that would overwrite, warn and exit unless <code>--force</code> is passed</li>
+</ul>
+</li>
+</ol>
+<p>ELSE IF local template</p>
+<ol>
+<li>
+<p>Open local template folder</p>
+</li>
+<li>
+<p>Delete destination directory recursively</p>
+</li>
+<li>
+<p>Copy files recursively using the fastest system calls available (on macOS <code>fcopyfile</code> and Linux, <code>copy_file_range</code>). Do not copy or traverse into <code>node_modules</code> folder if exists (this alone makes it faster than <code>cp</code>)</p>
+</li>
+<li>
+<p>Parse the <code>package.json</code> (again!), update <code>name</code> to be <code>${basename(destination)}</code>, remove the <code>bun-create</code> section from the <code>package.json</code> and save the updated <code>package.json</code> to disk.</p>
+<ul>
+<li>IF Next.js is detected, add <code>bun-framework-next</code> to the list of dependencies</li>
+<li>IF Create React App is detected, add the entry point in /src/index.{js,jsx,ts,tsx} to <code>public/index.html</code></li>
+<li>IF Relay is detected, add <code>bun-macro-relay</code> so that Relay works</li>
+</ul>
+</li>
+<li>
+<p>Auto-detect the npm client, preferring <code>pnpm</code>, <code>yarn</code> (v1), and lastly <code>npm</code></p>
+</li>
+<li>
+<p>Run any tasks defined in <code>&quot;bun-create&quot;: { &quot;preinstall&quot; }</code> with the npm client</p>
+</li>
+<li>
+<p>Run <code>${npmClient} install</code> unless <code>--no-install</code> is passed OR no dependencies are in package.json</p>
+</li>
+<li>
+<p>Run any tasks defined in <code>&quot;bun-create&quot;: { &quot;preinstall&quot; }</code> with the npm client</p>
+</li>
+<li>
+<p>Run <code>git init; git add -A .; git commit -am &quot;Initial Commit&quot;;</code></p>
+<ul>
+<li>Rename <code>gitignore</code> to <code>.gitignore</code>. NPM automatically removes <code>.gitignore</code> files from appearing in packages.</li>
+<li>If there are dependencies, this runs in a separate thread concurrently while node_modules are being installed</li>
+<li>Using libgit2 if available was tested and performed 3x slower in microbenchmarks</li>
+</ul>
+</li>
+<li>
+<p>Done</p>
+</li>
+</ol>
+<p><code>misctools/publish-examples.js</code> publishes all examples to npm.</p>
+<h3 id="bun-bun"><a class="header" href="#bun-bun"><code>bun bun</code></a></h3>
+<p>Run <code>bun bun ./path-to.js</code> to generate a <code>node_modules.bun</code> file containing all imported dependencies (recursively).</p>
+<h4 id="why-bundle"><a class="header" href="#why-bundle">Why bundle?</a></h4>
+<ul>
+<li>For browsers, loading entire apps without bundling dependencies is typically slow. With a fast bundler &amp; transpiler, the bottleneck eventually becomes the web browser’s ability to run many network requests concurrently. There are many workarounds for this. <code>&lt;link rel=&quot;modulepreload&quot;&gt;</code>, HTTP/3, etc., but none are more effective than bundling. If you have reproducible evidence to the contrary, feel free to submit an issue. It would be better if bundling wasn’t necessary.</li>
+<li>On the server, bundling reduces the number of filesystem lookups to load JavaScript. While filesystem lookups are faster than HTTP requests, there’s still overhead.</li>
+</ul>
+<h4 id="what-is-bun"><a class="header" href="#what-is-bun">What is <code>.bun</code>?</a></h4>
+<p>Note: <a href="https://github.com/oven-sh/bun/issues/121">This format may change soon</a></p>
+<p>The <code>.bun</code> file contains:</p>
+<ul>
+<li>all the bundled source code</li>
+<li>all the bundled source code metadata</li>
+<li>project metadata &amp; configuration</li>
+</ul>
+<p>Here are some of the questions <code>.bun</code> files answer:</p>
+<ul>
+<li>when I import <code>react/index.js</code>, where in the <code>.bun</code> is the code for that? (not resolving, just the code)</li>
+<li>what modules of a package are used?</li>
+<li>what framework is used? (e.g., Next.js)</li>
+<li>where is the routes directory?</li>
+<li>how big is each imported dependency?</li>
+<li>what is the hash of the bundle’s contents? (for etags)</li>
+<li>what is the name &amp; version of every npm package exported in this bundle?</li>
+<li>what modules from which packages are used in this project? (&quot;project&quot; is defined as all the entry points used to generate the .bun)</li>
+</ul>
+<p>All in one file.</p>
+<p>It’s a little like a build cache, but designed for reuse across builds.</p>
+<h4 id="position-independent-code"><a class="header" href="#position-independent-code">Position-independent code</a></h4>
+<p>From a design perspective, the most important part of the <code>.bun</code> format is how code is organized. Each module is exported by a hash like this:</p>
+<pre><code class="language-js">// preact/dist/preact.module.js
+export var $eb6819b = $$m({
+  &quot;preact/dist/preact.module.js&quot;: (module, exports) =&gt; {
+    var n, l, u, i, t, o, r, f, e = {}, c = [], s = /acit|ex(?:s|g|n|p|$)|rph|grid|ows|mnc|ntw|ine[ch]|zoo|^ord|itera/i;
+    // ... rest of code
+</code></pre>
+<p>This makes bundled modules <a href="https://en.wikipedia.org/wiki/Position-independent_code">position-independent</a>. In theory, one could import only the exact modules in-use without reparsing code and without generating a new bundle. One bundle can dynamically become many bundles comprising only the modules in use on the webpage. Thanks to the metadata with the byte offsets, a web server can send each module to browsers <a href="https://en.wikipedia.org/wiki/Zero-copy">zero-copy</a> using <a href="https://man7.org/linux/man-pages/man2/sendfile.2.html">sendfile</a>. bun itself is not quite this smart yet, but these optimizations would be useful in production and potentially very useful for React Server Components.</p>
+<p>To see the schema inside, have a look at <a href="./src/api/schema.d.ts#:%7E:text=export%20interface-,JavascriptBundleContainer,-%7B"><code>JavascriptBundleContainer</code></a>. You can find JavaScript bindings to read the metadata in <a href="./src/api/schema.js">src/api/schema.js</a>. This is not really an API yet. It’s missing the part where it gets the binary data from the bottom of the file. Someday, I want this to be usable by other tools too.</p>
+<h4 id="where-is-the-code"><a class="header" href="#where-is-the-code">Where is the code?</a></h4>
+<p><code>.bun</code> files are marked as executable.</p>
+<p>To print out the code, run <code>./node_modules.bun</code> in your terminal or run <code>bun ./path-to-node_modules.bun</code>.</p>
+<p>Here is a copy-pastable example:</p>
+<pre><code class="language-bash">./node_modules.bun &gt; node_modules.js
+</code></pre>
+<p>This works because every <code>.bun</code> file starts with this:</p>
+<pre><code class="language-bash">#!/usr/bin/env bun
+</code></pre>
+<p>To deploy to production with bun, you’ll want to get the code from the <code>.bun</code> file and stick that somewhere your web server can find it (or if you’re using Vercel or a Rails app, in a <code>public</code> folder).</p>
+<p>Note that <code>.bun</code> is a binary file format, so just opening it in VSCode or vim might render strangely.</p>
+<h4 id="advanced"><a class="header" href="#advanced">Advanced</a></h4>
+<p>By default, <code>bun bun</code> only bundles external dependencies that are <code>import</code>ed or <code>require</code>d in either app code or another external dependency. An &quot;external dependency&quot; is defined as, &quot;A JavaScript-like file that has <code>/node_modules/</code> in the resolved file path and a corresponding <code>package.json</code>&quot;.</p>
+<p>To force bun to bundle packages which are not located in a <code>node_modules</code> folder (i.e., the final, resolved path following all symlinks), add a <code>bun</code> section to the root project’s <code>package.json</code> with <code>alwaysBundle</code> set to an array of package names to always bundle. Here’s an example:</p>
+<pre><code class="language-json">{
+  &quot;name&quot;: &quot;my-package-name-in-here&quot;,
+  &quot;bun&quot;: {
+    &quot;alwaysBundle&quot;: [&quot;@mybigcompany/my-workspace-package&quot;]
+  }
+}
+</code></pre>
+<p>Bundled dependencies are not eligible for Hot Module Reloading. The code is served to browsers &amp; bun.js verbatim. But, in the future, it may be sectioned off into only parts of the bundle being used. That’s possible in the current version of the <code>.bun</code> file (so long as you know which files are necessary), but it’s not implemented yet. Longer-term, it will include all <code>import</code> and <code>export</code> of each module inside.</p>
+<h4 id="what-is-the-module-id-hash"><a class="header" href="#what-is-the-module-id-hash">What is the module ID hash?</a></h4>
+<p>The <code>$eb6819b</code> hash used here:</p>
+<pre><code class="language-js">export var $eb6819b = $$m({
+</code></pre>
+<p>Is generated like this:</p>
+<ol>
+<li>Murmur3 32-bit hash of <code>package.name@package.version</code>. This is the hash uniquely identifying the npm package.</li>
+<li>Wyhash 64 of the <code>package.hash</code> + <code>package_path</code>. <code>package_path</code> means &quot;relative to the root of the npm package, where is the module imported?&quot;. For example, if you imported <code>react/jsx-dev-runtime.js</code>, the <code>package_path</code> is <code>jsx-dev-runtime.js</code>. <code>react-dom/cjs/react-dom.development.js</code> would be <code>cjs/react-dom.development.js</code></li>
+<li>Truncate the hash generated above to a <code>u32</code></li>
+</ol>
+<p>The implementation details of this module ID hash will vary between versions of bun. The important part is the metadata contains the module IDs, the package paths, and the package hashes, so it shouldn’t really matter in practice if other tooling wants to make use of any of this.</p>
+<h3 id="bun-upgrade"><a class="header" href="#bun-upgrade"><code>bun upgrade</code></a></h3>
+<p>To upgrade bun, run <code>bun upgrade</code>.</p>
+<p>It automatically downloads the latest version of bun and overwrites the currently-running version.</p>
+<p>This works by checking the latest version of bun in <a href="https://github.com/Jarred-Sumner/bun-releases-for-updater/releases">bun-releases-for-updater</a> and unzipping it using the system-provided <code>unzip</code> library (so that Gatekeeper works on macOS)</p>
+<p>If for any reason you run into issues, you can also use the curl install script:</p>
+<pre><code class="language-bash">curl https://bun.sh/install | bash
+</code></pre>
+<p>It will still work when bun is already installed.</p>
+<p>bun is distributed as a single binary file, so you can also do this manually:</p>
+<ul>
+<li>Download the latest version of bun for your platform in <a href="https://github.com/Jarred-Sumner/bun-releases-for-updater/releases/latest">bun-releases-for-updater</a> (<code>darwin</code> == macOS)</li>
+<li>Unzip the folder</li>
+<li>Move the <code>bun</code> binary to <code>~/.bun/bin</code> (or anywhere)</li>
+</ul>
+<h3 id="bun-completions"><a class="header" href="#bun-completions"><code>bun completions</code></a></h3>
+<p>This command installs completions for <code>zsh</code> and/or <code>fish</code>. It runs automatically on every <code>bun upgrade</code> and on install. It reads from <code>$SHELL</code> to determine which shell to install for. It tries several common shell completion directories for your shell and OS.</p>
+<p>If you want to copy the completions manually, run <code>bun completions &gt; path-to-file</code>. If you know the completions directory to install them to, run <code>bun completions /path/to/directory</code>.</p>
+<div style="break-before: page; page-break-before: always;"></div><h2 id="bunserve---fast-http-server"><a class="header" href="#bunserve---fast-http-server"><code>Bun.serve</code> - fast HTTP server</a></h2>
+<p>For a hello world HTTP server that writes &quot;bun!&quot;, <code>Bun.serve</code> serves about 2.5x more requests per second than node.js on Linux:</p>
+<div class="table-wrapper"><table><thead><tr><th>Requests per second</th><th>Runtime</th></tr></thead><tbody>
+<tr><td>~64,000</td><td>Node 16</td></tr>
+<tr><td>~160,000</td><td>Bun</td></tr>
+</tbody></table>
+</div>
+<p><sup>Bigger is better</sup></p>
+<details>
+<summary>Code</summary>
+<p>Bun:</p>
+<pre><code class="language-ts">Bun.serve({
+  fetch(req: Request) {
+    return new Response(`bun!`);
+  },
+  port: 3000,
+});
+</code></pre>
+<p>Node:</p>
+<pre><code class="language-ts">require(&quot;http&quot;)
+  .createServer((req, res) =&gt; res.end(&quot;bun!&quot;))
+  .listen(8080);
+</code></pre>
+<img width="499" alt="image" src="https://user-images.githubusercontent.com/709451/162389032-fc302444-9d03-46be-ba87-c12bd8ce89a0.png">
+</details>
+<h4 id="usage-1"><a class="header" href="#usage-1">Usage</a></h4>
+<p>Two ways to start an HTTP server with bun.js:</p>
+<ol>
+<li><code>export default</code> an object with a <code>fetch</code> function</li>
+</ol>
+<p>If the file used to start bun has a default export with a <code>fetch</code> function, it will start the HTTP server.</p>
+<pre><code class="language-ts">// hi.js
+export default {
+  fetch(req) {
+    return new Response(&quot;HI!&quot;);
+  },
+};
+
+// bun ./hi.js
+</code></pre>
+<p><code>fetch</code> receives a <a href="https://developer.mozilla.org/en-US/docs/Web/API/Request"><code>Request</code></a> object and must return either a <a href="https://developer.mozilla.org/en-US/docs/Web/API/Response"><code>Response</code> </a> or a <a href="https://developer.mozilla.org/en-US/docs/Web/API/Response"><code>Promise&lt;Response&gt;</code></a>. In a future version, it might have additional arguments for things like cookies.</p>
+<ol start="2">
+<li><code>Bun.serve</code> starts the HTTP server explicitly</li>
+</ol>
+<pre><code class="language-ts">Bun.serve({
+  fetch(req) {
+    return new Response(&quot;HI!&quot;);
+  },
+});
+</code></pre>
+<h4 id="error-handling"><a class="header" href="#error-handling">Error handling</a></h4>
+<p>For error handling, you get an <code>error</code> function.</p>
+<p>If <code>development: true</code> and <code>error</code> is not defined or doesn't return a <code>Response</code>, you will get an exception page with a stack trace:</p>
+<img width="687" alt="image" src="https://user-images.githubusercontent.com/709451/162382958-23614e8f-239c-4ba6-be75-b76ceef8227c.png">
+<p>It will hopefully make it easier to debug issues with bun until bun gets debugger support. This error page is based on what <code>bun dev</code> does.</p>
+<p><strong>If the error function returns a <code>Response</code>, it will be served instead</strong></p>
+<pre><code class="language-js">Bun.serve({
+  fetch(req) {
+    throw new Error(&quot;woops!&quot;);
+  },
+  error(error: Error) {
+    return new Response(&quot;Uh oh!!\n&quot; + error.toString(), { status: 500 });
+  },
+});
+</code></pre>
+<p><strong>If the <code>error</code> function itself throws and <code>development</code> is <code>false</code>, a generic 500 page will be shown</strong></p>
+<p>To stop the server, call <code>server.stop()</code>:</p>
+<pre><code class="language-ts">const server = Bun.serve({
+  fetch() {
+    return new Response(&quot;HI!&quot;);
+  },
+});
+
+server.stop();
+</code></pre>
+<p>The interface for <code>Bun.serve</code> is based on what <a href="https://developers.cloudflare.com/workers/learning/migrating-to-module-workers/#module-workers-in-the-dashboard">Cloudflare Workers</a> does.</p>
+<div style="break-before: page; page-break-before: always;"></div><h2 id="bunwrite--optimizing-io"><a class="header" href="#bunwrite--optimizing-io"><code>Bun.write</code> – optimizing I/O</a></h2>
+<p><code>Bun.write</code> lets you write, copy or pipe files automatically using the fastest system calls compatible with the input and platform.</p>
+<pre><code class="language-ts">interface Bun {
+  write(
+    destination: string | number | FileBlob,
+    input: string | FileBlob | Blob | ArrayBufferView
+  ): Promise&lt;number&gt;;
+}
+</code></pre>
+<div class="table-wrapper"><table><thead><tr><th>Output</th><th>Input</th><th>System Call</th><th>Platform</th></tr></thead><tbody>
+<tr><td>file</td><td>file</td><td>copy_file_range</td><td>Linux</td></tr>
+<tr><td>file</td><td>pipe</td><td>sendfile</td><td>Linux</td></tr>
+<tr><td>pipe</td><td>pipe</td><td>splice</td><td>Linux</td></tr>
+<tr><td>terminal</td><td>file</td><td>sendfile</td><td>Linux</td></tr>
+<tr><td>terminal</td><td>terminal</td><td>sendfile</td><td>Linux</td></tr>
+<tr><td>socket</td><td>file or pipe</td><td>sendfile (if http, not https)</td><td>Linux</td></tr>
+<tr><td>file (path, doesn't exist)</td><td>file (path)</td><td>clonefile</td><td>macOS</td></tr>
+<tr><td>file</td><td>file</td><td>fcopyfile</td><td>macOS</td></tr>
+<tr><td>file</td><td>Blob or string</td><td>write</td><td>macOS</td></tr>
+<tr><td>file</td><td>Blob or string</td><td>write</td><td>Linux</td></tr>
+</tbody></table>
+</div>
+<p>All this complexity is handled by a single function.</p>
+<pre><code class="language-ts">// Write &quot;Hello World&quot; to output.txt
+await Bun.write(&quot;output.txt&quot;, &quot;Hello World&quot;);
+</code></pre>
+<pre><code class="language-ts">// log a file to stdout
+await Bun.write(Bun.stdout, Bun.file(&quot;input.txt&quot;));
+</code></pre>
+<pre><code class="language-ts">// write the HTTP response body to disk
+await Bun.write(&quot;index.html&quot;, await fetch(&quot;http://example.com&quot;));
+// this does the same thing
+await Bun.write(Bun.file(&quot;index.html&quot;), await fetch(&quot;http://example.com&quot;));
+</code></pre>
+<pre><code class="language-ts">// copy input.txt to output.txt
+await Bun.write(&quot;output.txt&quot;, Bun.file(&quot;input.txt&quot;));
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h2 id="bunsqlite-sqlite3-module"><a class="header" href="#bunsqlite-sqlite3-module">bun:sqlite (SQLite3 module)</a></h2>
+<p><code>bun:sqlite</code> is a high-performance built-in <a href="https://www.sqlite.org/">SQLite3</a> module for bun.js.</p>
+<ul>
+<li>Simple, synchronous API (synchronous <em>is</em> faster)</li>
+<li>Transactions</li>
+<li>Binding named &amp; positional parameters</li>
+<li>Prepared statements</li>
+<li>Automatic type conversions (<code>BLOB</code> becomes <code>Uint8Array</code>)</li>
+<li>toString() prints as SQL</li>
+</ul>
+<p>Installation:</p>
+<pre><code class="language-sh"># there's nothing to install
+# bun:sqlite is built-in to bun.js
+</code></pre>
+<p>Example:</p>
+<pre><code class="language-ts">import { Database } from &quot;bun:sqlite&quot;;
+
+const db = new Database(&quot;mydb.sqlite&quot;);
+db.run(
+  &quot;CREATE TABLE IF NOT EXISTS foo (id INTEGER PRIMARY KEY AUTOINCREMENT, greeting TEXT)&quot;
+);
+db.run(&quot;INSERT INTO foo (greeting) VALUES (?)&quot;, &quot;Welcome to bun!&quot;);
+db.run(&quot;INSERT INTO foo (greeting) VALUES (?)&quot;, &quot;Hello World!&quot;);
+
+// get the first row
+db.query(&quot;SELECT * FROM foo&quot;).get();
+// { id: 1, greeting: &quot;Welcome to bun!&quot; }
+
+// get all rows
+db.query(&quot;SELECT * FROM foo&quot;).all();
+// [
+//   { id: 1, greeting: &quot;Welcome to bun!&quot; },
+//   { id: 2, greeting: &quot;Hello World!&quot; },
+// ]
+
+// get all rows matching a condition
+db.query(&quot;SELECT * FROM foo WHERE greeting = ?&quot;).all(&quot;Welcome to bun!&quot;);
+// [
+//   { id: 1, greeting: &quot;Welcome to bun!&quot; },
+// ]
+
+// get first row matching a named condition
+db.query(&quot;SELECT * FROM foo WHERE greeting = $greeting&quot;).get({
+  $greeting: &quot;Welcome to bun!&quot;,
+});
+// [
+//   { id: 1, greeting: &quot;Welcome to bun!&quot; },
+// ]
+</code></pre>
+<h3 id="bunsqlite-benchmark"><a class="header" href="#bunsqlite-benchmark">bun:sqlite Benchmark</a></h3>
+<p>Database: <a href="https://github.com/jpwhite3/northwind-SQLite3/blob/master/Northwind_large.sqlite.zip">Northwind Traders</a>.</p>
+<p>This benchmark can be run from <a href="./bench/sqlite">./bench/sqlite</a>.</p>
+<p>Here are results from an M1 Pro (64GB) on macOS 12.3.1.</p>
+<p><strong>SELECT * FROM &quot;Order&quot;</strong></p>
+<div class="table-wrapper"><table><thead><tr><th>Library</th><th>Runtime</th><th>ms/iter</th></tr></thead><tbody>
+<tr><td>bun:sqlite3</td><td>Bun 0.0.83</td><td>14.31 (1x)</td></tr>
+<tr><td>better-sqlite3</td><td>Node 18.0.0</td><td>40.81 (2.8x slower)</td></tr>
+<tr><td>deno.land/x/sqlite</td><td>Deno 1.21.2</td><td>125.96 (8.9x slower)</td></tr>
+</tbody></table>
+</div>
+<p><strong>SELECT * FROM &quot;Product&quot;</strong></p>
+<div class="table-wrapper"><table><thead><tr><th>Library</th><th>Runtime</th><th>us/iter</th></tr></thead><tbody>
+<tr><td>bun:sqlite3</td><td>Bun 0.0.83</td><td>33.85 (1x)</td></tr>
+<tr><td>better-sqlite3</td><td>Node 18.0.0</td><td>121.09 (3.5x slower)</td></tr>
+<tr><td>deno.land/x/sqlite</td><td>Deno 1.21.2</td><td>187.64 (8.9x slower)</td></tr>
+</tbody></table>
+</div>
+<p><strong>SELECT * FROM &quot;OrderDetail&quot;</strong></p>
+<div class="table-wrapper"><table><thead><tr><th>Library</th><th>Runtime</th><th>ms/iter</th></tr></thead><tbody>
+<tr><td>bun:sqlite3</td><td>Bun 0.0.83</td><td>146.92 (1x)</td></tr>
+<tr><td>better-sqlite3</td><td>Node 18.0.0</td><td>875.73 (5.9x slower)</td></tr>
+<tr><td>deno.land/x/sqlite</td><td>Deno 1.21.2</td><td>541.15 (3.6x slower)</td></tr>
+</tbody></table>
+</div>
+<p>In screenshot form (which has a different sorting order)</p>
+<img width="738" alt="image" src="https://user-images.githubusercontent.com/709451/168459263-8cd51ca3-a924-41e9-908d-cf3478a3b7f3.png">
+<h3 id="getting-started-with-bunsqlite"><a class="header" href="#getting-started-with-bunsqlite">Getting started with bun:sqlite</a></h3>
+<p>bun:sqlite's API is loosely based on <a href="https://github.com/JoshuaWise/better-sqlite3">better-sqlite3</a>, though the implementation is different.</p>
+<p>bun:sqlite has two classes:</p>
+<ul>
+<li><code>class Database</code></li>
+<li><code>class Statement</code></li>
+</ul>
+<h4 id="database"><a class="header" href="#database"><code>Database</code></a></h4>
+<p>Calling <code>new Database(filename)</code> opens or creates the SQLite database.</p>
+<pre><code class="language-ts">constructor(
+      filename: string,
+      options?:
+        | number
+        | {
+            /**
+             * Open the database as read-only (no write operations, no create).
+             *
+             * Equivalent to {@link constants.SQLITE_OPEN_READONLY}
+             */
+            readonly?: boolean;
+            /**
+             * Allow creating a new database
+             *
+             * Equivalent to {@link constants.SQLITE_OPEN_CREATE}
+             */
+            create?: boolean;
+            /**
+             * Open the database as read-write
+             *
+             * Equivalent to {@link constants.SQLITE_OPEN_READWRITE}
+             */
+            readwrite?: boolean;
+          }
+    );
+</code></pre>
+<p>To open or create a SQLite3 database:</p>
+<pre><code class="language-ts">import { Database } from &quot;bun:sqlite&quot;;
+
+const db = new Database(&quot;mydb.sqlite&quot;);
+</code></pre>
+<p>Open an in-memory database:</p>
+<pre><code class="language-ts">import { Database } from &quot;bun:sqlite&quot;;
+
+// all of these do the same thing
+var db = new Database(&quot;:memory:&quot;);
+var db = new Database();
+var db = new Database(&quot;&quot;);
+</code></pre>
+<p>Open read-write and throw if the database doesn't exist:</p>
+<pre><code class="language-ts">import { Database } from &quot;bun:sqlite&quot;;
+const db = new Database(&quot;mydb.sqlite&quot;, { readwrite: true });
+</code></pre>
+<p>Open read-only and throw if the database doesn't exist:</p>
+<pre><code class="language-ts">import { Database } from &quot;bun:sqlite&quot;;
+const db = new Database(&quot;mydb.sqlite&quot;, { readonly: true });
+</code></pre>
+<p>Open read-write, don't throw if new file:</p>
+<pre><code class="language-ts">import { Database } from &quot;bun:sqlite&quot;;
+const db = new Database(&quot;mydb.sqlite&quot;, { readonly: true, create: true });
+</code></pre>
+<p>Open a database from a <code>Uint8Array</code>:</p>
+<pre><code class="language-ts">import { Database } from &quot;bun:sqlite&quot;;
+import { readFileSync } from &quot;fs&quot;;
+
+// unlike passing a filepath, this will not persist any changes to disk
+// it will be read-write but not persistent
+const db = new Database(readFileSync(&quot;mydb.sqlite&quot;));
+</code></pre>
+<p>Close a database:</p>
+<pre><code class="language-ts">var db = new Database();
+db.close();
+</code></pre>
+<p>Note: <code>close()</code> is called automatically when the database is garbage collected. It is safe to call multiple times but has no effect after the first.</p>
+<h4 id="databaseprototypequery"><a class="header" href="#databaseprototypequery">Database.prototype.query</a></h4>
+<p><code>query(sql)</code> creates a <code>Statement</code> for the given SQL and caches it, but does not execute it.</p>
+<pre><code class="language-ts">class Database {
+  query(sql: string): Statement;
+}
+</code></pre>
+<p><code>query</code> returns a <code>Statement</code> object.</p>
+<p>It performs the same operation as <code>Database.prototype.prepare</code>, except:</p>
+<ul>
+<li><code>query</code> caches the prepared statement in the <code>Database</code> object</li>
+<li><code>query</code> doesn't bind parameters</li>
+</ul>
+<p>This intended to make it easier for <code>bun:sqlite</code> to be fast by default. Calling <code>.prepare</code> compiles a SQLite query, which can take some time, so it's better to cache those a little.</p>
+<p>You can bind parameters on any call to a statement.</p>
+<pre><code class="language-js">import { Database } from &quot;bun:sqlite&quot;;
+
+// generate some data
+var db = new Database();
+db.run(
+  &quot;CREATE TABLE foo (id INTEGER PRIMARY KEY AUTOINCREMENT, greeting TEXT)&quot;
+);
+db.run(&quot;INSERT INTO foo (greeting) VALUES ($greeting)&quot;, {
+  $greeting: &quot;Welcome to bun&quot;,
+});
+
+// get the query
+const stmt = db.query(&quot;SELECT * FROM foo WHERE greeting = ?&quot;);
+
+// run the query
+stmt.all(&quot;Welcome to bun!&quot;);
+stmt.get(&quot;Welcome to bun!&quot;);
+stmt.run(&quot;Welcome to bun!&quot;);
+</code></pre>
+<h4 id="databaseprototypeprepare"><a class="header" href="#databaseprototypeprepare">Database.prototype.prepare</a></h4>
+<p><code>prepare(sql)</code> creates a <code>Statement</code> for the given SQL, but does not execute it.</p>
+<p>Unlike <code>query()</code>, this does not cache the compiled query.</p>
+<pre><code class="language-ts">import { Database } from &quot;bun:sqlite&quot;;
+
+// generate some data
+var db = new Database();
+db.run(
+  &quot;CREATE TABLE foo (id INTEGER PRIMARY KEY AUTOINCREMENT, greeting TEXT)&quot;
+);
+
+// compile the prepared statement
+const stmt = db.prepare(&quot;SELECT * FROM foo WHERE bar = ?&quot;);
+
+// run the prepared statement
+stmt.all(&quot;baz&quot;);
+</code></pre>
+<p>Internally, this calls <a href="https://www.sqlite.org/c3ref/prepare.html"><code>sqlite3_prepare_v3</code></a>.</p>
+<h4 id="databaseprototypeexec--databaseprototyperun"><a class="header" href="#databaseprototypeexec--databaseprototyperun">Database.prototype.exec &amp; Database.prototype.run</a></h4>
+<p><code>exec</code> is for one-off executing a query which does not need to return anything.
+<code>run</code> is an alias.</p>
+<pre><code class="language-ts">class Database {
+  // exec is an alias for run
+  exec(sql: string, ...params: ParamsType): void;
+  run(sql: string, ...params: ParamsType): void;
+}
+</code></pre>
+<p>This is useful for things like</p>
+<p>Creating a table:</p>
+<pre><code class="language-ts">import { Database } from &quot;bun:sqlite&quot;;
+
+var db = new Database();
+db.exec(
+  &quot;CREATE TABLE foo (id INTEGER PRIMARY KEY AUTOINCREMENT, greeting TEXT)&quot;
+);
+</code></pre>
+<p>Inserting one row:</p>
+<pre><code class="language-ts">import { Database } from &quot;bun:sqlite&quot;;
+
+var db = new Database();
+db.exec(
+  &quot;CREATE TABLE foo (id INTEGER PRIMARY KEY AUTOINCREMENT, greeting TEXT)&quot;
+);
+
+// insert one row
+db.exec(&quot;INSERT INTO foo (greeting) VALUES ($greeting)&quot;, {
+  $greeting: &quot;Welcome to bun&quot;,
+});
+</code></pre>
+<p>For queries which aren't intended to be run multiple times, it should be faster to use <code>exec()</code> than <code>prepare()</code> or <code>query()</code> because it doesn't create a <code>Statement</code> object.</p>
+<p>Internally, this function calls <a href="https://www.sqlite.org/c3ref/prepare.html"><code>sqlite3_prepare</code></a>, <a href="https://www.sqlite.org/c3ref/step.html"><code>sqlite3_step</code></a>, and <a href="https://www.sqlite.org/c3ref/finalize.html"><code>sqlite3_finalize</code></a>.</p>
+<h4 id="databaseprototypetransaction"><a class="header" href="#databaseprototypetransaction">Database.prototype.transaction</a></h4>
+<p>Creates a function that always runs inside a transaction. When the function is invoked, it will begin a new transaction. When the function returns, the transaction will be committed. If an exception is thrown, the transaction will be rolled back (and the exception will propagate as usual).</p>
+<pre><code class="language-ts">// setup
+import { Database } from &quot;bun:sqlite&quot;;
+const db = Database.open(&quot;:memory:&quot;);
+db.exec(
+  &quot;CREATE TABLE cats (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT UNIQUE, age INTEGER)&quot;
+);
+
+const insert = db.prepare(&quot;INSERT INTO cats (name, age) VALUES ($name, $age)&quot;);
+const insertMany = db.transaction((cats) =&gt; {
+  for (const cat of cats) insert.run(cat);
+});
+
+insertMany([
+  { $name: &quot;Joey&quot;, $age: 2 },
+  { $name: &quot;Sally&quot;, $age: 4 },
+  { $name: &quot;Junior&quot;, $age: 1 },
+]);
+</code></pre>
+<p>Transaction functions can be called from inside other transaction functions. When doing so, the inner transaction becomes a savepoint.</p>
+<pre><code class="language-ts">// setup
+import { Database } from &quot;bun:sqlite&quot;;
+const db = Database.open(&quot;:memory:&quot;);
+db.exec(
+  &quot;CREATE TABLE expenses (id INTEGER PRIMARY KEY AUTOINCREMENT, note TEXT, dollars INTEGER);&quot;
+);
+db.exec(
+  &quot;CREATE TABLE cats (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT UNIQUE, age INTEGER)&quot;
+);
+const newExpense = db.prepare(
+  &quot;INSERT INTO expenses (note, dollars) VALUES (?, ?)&quot;
+);
+const insert = db.prepare(&quot;INSERT INTO cats (name, age) VALUES ($name, $age)&quot;);
+const insertMany = db.transaction((cats) =&gt; {
+  for (const cat of cats) insert.run(cat);
+});
+
+const adopt = db.transaction((cats) =&gt; {
+  newExpense.run(&quot;adoption fees&quot;, 20);
+  insertMany(cats); // nested transaction
+});
+
+adopt([
+  { $name: &quot;Joey&quot;, $age: 2 },
+  { $name: &quot;Sally&quot;, $age: 4 },
+  { $name: &quot;Junior&quot;, $age: 1 },
+]);
+</code></pre>
+<p>Transactions also come with <code>deferred</code>, <code>immediate</code>, and <code>exclusive</code> versions.</p>
+<pre><code class="language-ts">insertMany(cats); // uses &quot;BEGIN&quot;
+insertMany.deferred(cats); // uses &quot;BEGIN DEFERRED&quot;
+insertMany.immediate(cats); // uses &quot;BEGIN IMMEDIATE&quot;
+insertMany.exclusive(cats); // uses &quot;BEGIN EXCLUSIVE&quot;
+</code></pre>
+<p>Any arguments passed to the transaction function will be forwarded to the wrapped function, and any values returned from the wrapped function will be returned from the transaction function. The wrapped function will also have access to the same binding as the transaction function.</p>
+<p>bun:sqlite's transaction implementation is based on <a href="https://github.com/JoshuaWise/better-sqlite3/blob/master/docs/api.md#transactionfunction---function">better-sqlite3</a> (along with this section of the docs), so thanks to Joshua Wise and better-sqlite3 contributors.</p>
+<h4 id="databaseprototypeserialize"><a class="header" href="#databaseprototypeserialize">Database.prototype.serialize</a></h4>
+<p>SQLite has a built-in way to <a href="https://www.sqlite.org/c3ref/serialize.html">serialize</a> and <a href="https://www.sqlite.org/c3ref/deserialize.html">deserialize</a> databases to and from memory.</p>
+<p><code>bun:sqlite</code> fully supports it:</p>
+<pre><code class="language-ts">var db = new Database();
+
+// write some data
+db.run(
+  &quot;CREATE TABLE foo (id INTEGER PRIMARY KEY AUTOINCREMENT, greeting TEXT)&quot;
+);
+db.run(&quot;INSERT INTO foo VALUES (?)&quot;, &quot;Welcome to bun!&quot;);
+db.run(&quot;INSERT INTO foo VALUES (?)&quot;, &quot;Hello World!&quot;);
+
+const copy = db.serialize();
+// =&gt; Uint8Array
+
+const db2 = new Database(copy);
+db2.query(&quot;SELECT * FROM foo&quot;).all();
+// =&gt; [
+//   { id: 1, greeting: &quot;Welcome to bun!&quot; },
+//   { id: 2, greeting: &quot;Hello World!&quot; },
+// ]
+</code></pre>
+<p><code>db.serialize()</code> returns a <code>Uint8Array</code> of the database.</p>
+<p>Internally, it calls <a href="https://www.sqlite.org/c3ref/serialize.html"><code>sqlite3_serialize</code></a>.</p>
+<h4 id="databaseprototypeloadextension"><a class="header" href="#databaseprototypeloadextension">Database.prototype.loadExtension</a></h4>
+<p><code>bun:sqlite</code> supports <a href="https://www.sqlite.org/loadext.html">SQLite extensions</a>.</p>
+<p>To load a SQLite extension, call <code>Database.prototype.loadExtension(name)</code>:</p>
+<pre><code class="language-ts">import { Database } from &quot;bun:sqlite&quot;;
+
+var db = new Database();
+
+db.loadExtension(&quot;myext&quot;);
+</code></pre>
+<p>If you're on macOS, you will need to first use a custom SQLite install (you can install with homebrew). By default, bun uses Apple's proprietary build of SQLite because it benchmarks about 50% faster. However, they disabled extension support, so you will need to have a custom build of SQLite to use extensions on macOS.</p>
+<pre><code class="language-ts">import { Database } from &quot;bun:sqlite&quot;;
+
+// on macOS, this must be run before any other calls to `Database`
+// if called on linux, it will return true and do nothing
+// on linux it will still check that a string was passed
+Database.setCustomSQLite(&quot;/path/to/sqlite.dylib&quot;);
+
+var db = new Database();
+
+db.loadExtension(&quot;myext&quot;);
+</code></pre>
+<p>To install sqlite with homebrew:</p>
+<pre><code class="language-bash">brew install sqlite
+</code></pre>
+<h4 id="statement"><a class="header" href="#statement">Statement</a></h4>
+<p><code>Statement</code> is a prepared statement. Use it to run queries that get results.</p>
+<p>TLDR:</p>
+<ul>
+<li><a href="bun_sqlite.html#statementall"><code>Statement.all(...optionalParamsToBind)</code></a> returns all rows as an array of objects</li>
+<li><a href="bun_sqlite.html#statementvalues"><code>Statement.values(...optionalParamsToBind)</code></a> returns all rows as an array of arrays</li>
+<li><a href="bun_sqlite.html#statementget"><code>Statement.get(...optionalParamsToBind)</code></a> returns the first row as an object</li>
+<li><a href="bun_sqlite.html#statementrun"><code>Statement.run(...optionalParamsToBind)</code></a> runs the statement and returns nothing</li>
+<li><a href="bun_sqlite.html#statementfinalize"><code>Statement.finalize()</code></a> closes the statement</li>
+<li><a href="bun_sqlite.html#statementtostring"><code>Statement.toString()</code></a> prints the expanded SQL, including bound parameters</li>
+<li><code>get Statement.columnNames</code> get the returned column names</li>
+<li><code>get Statement.paramsCount</code> how many parameters are expected?</li>
+</ul>
+<p>You can bind parameters on any call to a statement. Named parameters and positional parameters are supported. Bound parameters are remembered between calls and reset the next time you pass parameters to bind.</p>
+<pre><code class="language-ts">import { Database } from &quot;bun:sqlite&quot;;
+
+// setup
+var db = new Database();
+db.run(
+  &quot;CREATE TABLE foo (id INTEGER PRIMARY KEY AUTOINCREMENT, greeting TEXT)&quot;
+);
+db.run(&quot;INSERT INTO foo VALUES (?)&quot;, &quot;Welcome to bun!&quot;);
+db.run(&quot;INSERT INTO foo VALUES (?)&quot;, &quot;Hello World!&quot;);
+
+// Statement object
+var statement = db.query(&quot;SELECT * FROM foo&quot;);
+
+// returns all the rows
+statement.all();
+
+// returns the first row
+statement.get();
+
+// runs the query, without returning anything
+statement.run();
+</code></pre>
+<h4 id="statementall"><a class="header" href="#statementall">Statement.all</a></h4>
+<p>Calling <code>all()</code> on a <code>Statement</code> instance runs the query and returns the rows as an array of objects.</p>
+<pre><code class="language-ts">import { Database } from &quot;bun:sqlite&quot;;
+
+// setup
+var db = new Database();
+db.run(
+  &quot;CREATE TABLE foo (id INTEGER PRIMARY KEY AUTOINCREMENT, greeting TEXT, count INTEGER)&quot;
+);
+db.run(&quot;INSERT INTO foo (greeting, count) VALUES (?, ?)&quot;, &quot;Welcome to bun!&quot;, 2);
+db.run(&quot;INSERT INTO foo (greeting, count) VALUES (?, ?)&quot;, &quot;Hello World!&quot;, 0);
+db.run(
+  &quot;INSERT INTO foo (greeting, count) VALUES (?, ?)&quot;,
+  &quot;Welcome to bun!!!!&quot;,
+  2
+);
+
+// Statement object
+var statement = db.query(&quot;SELECT * FROM foo WHERE count = ?&quot;);
+
+// return all the query results, binding 2 to the count parameter
+statement.all(2);
+// =&gt; [
+//   { id: 1, greeting: &quot;Welcome to bun!&quot;, count: 2 },
+//   { id: 3, greeting: &quot;Welcome to bun!!!!&quot;, count: 2 },
+// ]
+</code></pre>
+<p>Internally, this calls <a href="https://www.sqlite.org/capi3ref.html#sqlite3_reset"><code>sqlite3_reset</code></a> and repeatedly calls <a href="https://www.sqlite.org/capi3ref.html#sqlite3_step"><code>sqlite3_step</code></a> until it returns <code>SQLITE_DONE</code>.</p>
+<h4 id="statementvalues"><a class="header" href="#statementvalues">Statement.values</a></h4>
+<p>Calling <code>values()</code> on a <code>Statement</code> instance runs the query and returns the rows as an array of arrays.</p>
+<pre><code class="language-ts">import { Database } from &quot;bun:sqlite&quot;;
+
+// setup
+var db = new Database();
+db.run(
+  &quot;CREATE TABLE foo (id INTEGER PRIMARY KEY AUTOINCREMENT, greeting TEXT, count INTEGER)&quot;
+);
+db.run(&quot;INSERT INTO foo (greeting, count) VALUES (?, ?)&quot;, &quot;Welcome to bun!&quot;, 2);
+db.run(&quot;INSERT INTO foo (greeting, count) VALUES (?, ?)&quot;, &quot;Hello World!&quot;, 0);
+db.run(
+  &quot;INSERT INTO foo (greeting, count) VALUES (?, ?)&quot;,
+  &quot;Welcome to bun!!!!&quot;,
+  2
+);
+
+// Statement object
+var statement = db.query(&quot;SELECT * FROM foo WHERE count = ?&quot;);
+
+// return all the query results as an array of arrays, binding 2 to &quot;count&quot;
+statement.values(2);
+// =&gt; [
+//   [ 1, &quot;Welcome to bun!&quot;, 2 ],
+//   [ 3, &quot;Welcome to bun!!!!&quot;, 2 ],
+// ]
+
+// Statement object, but with named parameters
+var statement = db.query(&quot;SELECT * FROM foo WHERE count = $count&quot;);
+
+// return all the query results as an array of arrays, binding 2 to &quot;count&quot;
+statement.values({ $count: 2 });
+// =&gt; [
+//   [ 1, &quot;Welcome to bun!&quot;, 2 ],
+//   [ 3, &quot;Welcome to bun!!!!&quot;, 2 ],
+// ]
+</code></pre>
+<p>Internally, this calls <a href="https://www.sqlite.org/capi3ref.html#sqlite3_reset"><code>sqlite3_reset</code></a> and repeatedly calls <a href="https://www.sqlite.org/capi3ref.html#sqlite3_step"><code>sqlite3_step</code></a> until it returns <code>SQLITE_DONE</code>.</p>
+<h4 id="statementget"><a class="header" href="#statementget">Statement.get</a></h4>
+<p>Calling <code>get()</code> on a <code>Statement</code> instance runs the query and returns the first result as an object.</p>
+<pre><code class="language-ts">import { Database } from &quot;bun:sqlite&quot;;
+
+// setup
+var db = new Database();
+db.run(
+  &quot;CREATE TABLE foo (id INTEGER PRIMARY KEY AUTOINCREMENT, greeting TEXT, count INTEGER)&quot;
+);
+db.run(&quot;INSERT INTO foo (greeting, count) VALUES (?, ?)&quot;, &quot;Welcome to bun!&quot;, 2);
+db.run(&quot;INSERT INTO foo (greeting, count) VALUES (?, ?)&quot;, &quot;Hello World!&quot;, 0);
+db.run(
+  &quot;INSERT INTO foo (greeting, count) VALUES (?, ?)&quot;,
+  &quot;Welcome to bun!!!!&quot;,
+  2
+);
+
+// Statement object
+var statement = db.query(&quot;SELECT * FROM foo WHERE count = ?&quot;);
+
+// return the first row as an object, binding 2 to the count parameter
+statement.get(2);
+// =&gt; { id: 1, greeting: &quot;Welcome to bun!&quot;, count: 2 }
+
+// Statement object, but with named parameters
+var statement = db.query(&quot;SELECT * FROM foo WHERE count = $count&quot;);
+
+// return the first row as an object, binding 2 to the count parameter
+statement.get({ $count: 2 });
+// =&gt; { id: 1, greeting: &quot;Welcome to bun!&quot;, count: 2 }
+</code></pre>
+<p>Internally, this calls <a href="https://www.sqlite.org/capi3ref.html#sqlite3_reset"><code>sqlite3_reset</code></a> and calls <a href="https://www.sqlite.org/capi3ref.html#sqlite3_step"><code>sqlite3_step</code></a> once. Stepping through all the rows is not necessary when you only want the first row.</p>
+<h4 id="statementrun"><a class="header" href="#statementrun">Statement.run</a></h4>
+<p>Calling <code>run()</code> on a <code>Statement</code> instance runs the query and returns nothing.</p>
+<p>This is useful if you want to repeatedly run a query, but don't care about the results.</p>
+<pre><code class="language-ts">import { Database } from &quot;bun:sqlite&quot;;
+
+// setup
+var db = new Database();
+db.run(
+  &quot;CREATE TABLE foo (id INTEGER PRIMARY KEY AUTOINCREMENT, greeting TEXT, count INTEGER)&quot;
+);
+db.run(&quot;INSERT INTO foo (greeting, count) VALUES (?, ?)&quot;, &quot;Welcome to bun!&quot;, 2);
+db.run(&quot;INSERT INTO foo (greeting, count) VALUES (?, ?)&quot;, &quot;Hello World!&quot;, 0);
+db.run(
+  &quot;INSERT INTO foo (greeting, count) VALUES (?, ?)&quot;,
+  &quot;Welcome to bun!!!!&quot;,
+  2
+);
+
+// Statement object (TODO: use a better example query)
+var statement = db.query(&quot;SELECT * FROM foo&quot;);
+
+// run the query, returning nothing
+statement.run();
+</code></pre>
+<p>Internally, this calls <a href="https://www.sqlite.org/capi3ref.html#sqlite3_reset"><code>sqlite3_reset</code></a> and calls <a href="https://www.sqlite.org/capi3ref.html#sqlite3_step"><code>sqlite3_step</code></a> once. Stepping through all the rows is not necessary when you don't care about the results.</p>
+<h4 id="statementfinalize"><a class="header" href="#statementfinalize">Statement.finalize</a></h4>
+<p>This method finalizes the statement, freeing any resources associated with it.</p>
+<p>After a statement has been finalized, it cannot be used for any further queries. Any attempt to run the statement will throw an error. Calling it multiple times will have no effect.</p>
+<p>It is a good idea to finalize a statement when you are done with it, but the garbage collector will do it for you if you don't.</p>
+<pre><code class="language-ts">import { Database } from &quot;bun:sqlite&quot;;
+
+// setup
+var db = new Database();
+db.run(
+  &quot;CREATE TABLE foo (id INTEGER PRIMARY KEY AUTOINCREMENT, greeting TEXT, count INTEGER)&quot;
+);
+db.run(&quot;INSERT INTO foo (greeting, count) VALUES (?, ?)&quot;, &quot;Welcome to bun!&quot;, 2);
+db.run(&quot;INSERT INTO foo (greeting, count) VALUES (?, ?)&quot;, &quot;Hello World!&quot;, 0);
+db.run(
+  &quot;INSERT INTO foo (greeting, count) VALUES (?, ?)&quot;,
+  &quot;Welcome to bun!!!!&quot;,
+  2
+);
+
+// Statement object
+var statement = db.query(&quot;SELECT * FROM foo WHERE count = ?&quot;);
+
+statement.finalize();
+
+// this will throw
+statement.run();
+</code></pre>
+<h4 id="statementtostring"><a class="header" href="#statementtostring">Statement.toString()</a></h4>
+<p>Calling <code>toString()</code> on a <code>Statement</code> instance prints the expanded SQL query. This is useful for debugging.</p>
+<pre><code class="language-ts">import { Database } from &quot;bun:sqlite&quot;;
+
+// setup
+var db = new Database();
+db.run(
+  &quot;CREATE TABLE foo (id INTEGER PRIMARY KEY AUTOINCREMENT, greeting TEXT, count INTEGER)&quot;
+);
+db.run(&quot;INSERT INTO foo (greeting, count) VALUES (?, ?)&quot;, &quot;Welcome to bun!&quot;, 2);
+db.run(&quot;INSERT INTO foo (greeting, count) VALUES (?, ?)&quot;, &quot;Hello World!&quot;, 0);
+db.run(
+  &quot;INSERT INTO foo (greeting, count) VALUES (?, ?)&quot;,
+  &quot;Welcome to bun!!!!&quot;,
+  2
+);
+
+// Statement object
+const statement = db.query(&quot;SELECT * FROM foo WHERE count = ?&quot;);
+
+console.log(statement.toString());
+// =&gt; &quot;SELECT * FROM foo WHERE count = NULL&quot;
+
+statement.run(2); // bind the param
+
+console.log(statement.toString());
+// =&gt; &quot;SELECT * FROM foo WHERE count = 2&quot;
+</code></pre>
+<p>Internally, this calls <a href="https://www.sqlite.org/capi3ref.html#sqlite3_expanded_sql"><code>sqlite3_expanded_sql</code></a>.</p>
+<h4 id="datatypes"><a class="header" href="#datatypes">Datatypes</a></h4>
+<div class="table-wrapper"><table><thead><tr><th>JavaScript type</th><th>SQLite type</th></tr></thead><tbody>
+<tr><td><code>string</code></td><td><code>TEXT</code></td></tr>
+<tr><td><code>number</code></td><td><code>INTEGER</code> or <code>DECIMAL</code></td></tr>
+<tr><td><code>boolean</code></td><td><code>INTEGER</code> (1 or 0)</td></tr>
+<tr><td><code>Uint8Array</code></td><td><code>BLOB</code></td></tr>
+<tr><td><code>Buffer</code></td><td><code>BLOB</code></td></tr>
+<tr><td><code>bigint</code></td><td><code>INTEGER</code></td></tr>
+<tr><td><code>null</code></td><td><code>NULL</code></td></tr>
+</tbody></table>
+</div><div style="break-before: page; page-break-before: always;"></div><h3 id="bunffi-foreign-functions-interface"><a class="header" href="#bunffi-foreign-functions-interface"><code>bun:ffi</code> (Foreign Functions Interface)</a></h3>
+<p><code>bun:ffi</code> lets you efficiently call native libraries from JavaScript. It works with languages that support the C ABI (Zig, Rust, C/C++, C#, Nim, Kotlin, etc).</p>
+<p>This snippet prints sqlite3's version number:</p>
+<pre><code class="language-ts">import { dlopen, FFIType, suffix } from &quot;bun:ffi&quot;;
+
+// `suffix` is either &quot;dylib&quot;, &quot;so&quot;, or &quot;dll&quot; depending on the platform
+// you don't have to use &quot;suffix&quot;, it's just there for convenience
+const path = `libsqlite3.${suffix}`;
+
+const {
+  symbols: {
+    // sqlite3_libversion is the function we will call
+    sqlite3_libversion,
+  },
+} =
+  // dlopen() expects:
+  // 1. a library name or file path
+  // 2. a map of symbols
+  dlopen(path, {
+    // `sqlite3_libversion` is a function that returns a string
+    sqlite3_libversion: {
+      // sqlite3_libversion takes no arguments
+      args: [],
+      // sqlite3_libversion returns a pointer to a string
+      returns: FFIType.cstring,
+    },
+  });
+
+console.log(`SQLite 3 version: ${sqlite3_libversion()}`);
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h4 id="low-overhead-ffi"><a class="header" href="#low-overhead-ffi">Low-overhead FFI</a></h4>
+<p>3ns to go from JavaScript &lt;&gt; native code with <code>bun:ffi</code> (on my machine, an M1 Pro with 64GB of RAM)</p>
+<ul>
+<li>5x faster than napi (Node v17.7.1)</li>
+<li>100x faster than Deno v1.21.1</li>
+</ul>
+<p>As measured in <a href="ffi/./bench/ffi/plus100">this simple benchmark</a></p>
+<img src="https://user-images.githubusercontent.com/709451/166429741-e6d83ca5-3808-4397-acb7-bb2c9f4329be.png" height="400">
+<details>
+<summary>Why is bun:ffi fast?</summary>
+<p>Bun generates &amp; just-in-time compiles C bindings that efficiently convert values between JavaScript types and native types.</p>
+<p>To compile C, Bun embeds <a href="https://github.com/TinyCC/tinycc">TinyCC</a>, a small and fast C compiler.</p>
+</details>
+<div style="break-before: page; page-break-before: always;"></div><h4 id="usage-2"><a class="header" href="#usage-2">Usage</a></h4>
+<p>With Zig:</p>
+<pre><code class="language-zig">// add.zig
+pub export fn add(a: i32, b: i32) i32 {
+  return a + b;
+}
+</code></pre>
+<p>To compile:</p>
+<pre><code class="language-bash">zig build-lib add.zig -dynamic -OReleaseFast
+</code></pre>
+<p>Pass <code>dlopen</code> the path to the shared library and the list of symbols you want to import.</p>
+<pre><code class="language-ts">import { dlopen, FFIType, suffix } from &quot;bun:ffi&quot;;
+
+const path = `libadd.${suffix}`;
+
+const lib = dlopen(path, {
+  add: {
+    args: [FFIType.i32, FFIType.i32],
+    returns: FFIType.i32,
+  },
+});
+
+lib.symbols.add(1, 2);
+</code></pre>
+<p>With Rust:</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>// add.rs
+#[no_mangle]
+pub extern &quot;C&quot; fn add(a: isize, b: isize) -&gt; isize {
+    a + b
+}
+<span class="boring">}
+</span></code></pre></pre>
+<p>To compile:</p>
+<pre><code class="language-bash">rustc --crate-type cdylib add.rs
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h4 id="supported-ffi-types-ffitype"><a class="header" href="#supported-ffi-types-ffitype">Supported FFI types (<code>FFIType</code>)</a></h4>
+<div class="table-wrapper"><table><thead><tr><th><code>FFIType</code></th><th>C Type</th><th>Aliases</th></tr></thead><tbody>
+<tr><td>cstring</td><td><code>char*</code></td><td></td></tr>
+<tr><td>ptr</td><td><code>void*</code></td><td><code>pointer</code>, <code>void*</code>, <code>char*</code></td></tr>
+<tr><td>i8</td><td><code>int8_t</code></td><td><code>int8_t</code></td></tr>
+<tr><td>i16</td><td><code>int16_t</code></td><td><code>int16_t</code></td></tr>
+<tr><td>i32</td><td><code>int32_t</code></td><td><code>int32_t</code>, <code>int</code></td></tr>
+<tr><td>i64</td><td><code>int64_t</code></td><td><code>int32_t</code></td></tr>
+<tr><td>u8</td><td><code>uint8_t</code></td><td><code>uint8_t</code></td></tr>
+<tr><td>u16</td><td><code>uint16_t</code></td><td><code>uint16_t</code></td></tr>
+<tr><td>u32</td><td><code>uint32_t</code></td><td><code>uint32_t</code></td></tr>
+<tr><td>u64</td><td><code>uint64_t</code></td><td><code>uint32_t</code></td></tr>
+<tr><td>f32</td><td><code>float</code></td><td><code>float</code></td></tr>
+<tr><td>f64</td><td><code>double</code></td><td><code>double</code></td></tr>
+<tr><td>bool</td><td><code>bool</code></td><td></td></tr>
+<tr><td>char</td><td><code>char</code></td><td></td></tr>
+</tbody></table>
+</div>
+<h4 id="strings-cstring"><a class="header" href="#strings-cstring">Strings (<code>CString</code>)</a></h4>
+<p>JavaScript strings and C-like strings are different, and that complicates using strings with native libraries.</p>
+<details>
+<summary>How are JavaScript strings and C strings different?</summary>
+<p>JavaScript strings:</p>
+<ul>
+<li>UTF16 (2 bytes per letter) or potentially latin1, depending on the JavaScript engine &amp; what characters are used</li>
+<li><code>length</code> stored separately</li>
+<li>Immutable</li>
+</ul>
+<p>C strings:</p>
+<ul>
+<li>UTF8 (1 byte per letter), usually</li>
+<li>The length is not stored. Instead, the string is null-terminated which means the length is the index of the first <code>\0</code> it finds</li>
+<li>Mutable</li>
+</ul>
+</details>
+<p>To help with that, <code>bun:ffi</code> exports <code>CString</code> which extends JavaScript's built-in <code>String</code> to support null-terminated strings and add a few extras:</p>
+<pre><code class="language-ts">class CString extends String {
+  /**
+   * Given a `ptr`, this will automatically search for the closing `\0` character and transcode from UTF-8 to UTF-16 if necessary.
+   */
+  constructor(ptr: number, byteOffset?: number, byteLength?: number): string;
+
+  /**
+   * The ptr to the C string
+   *
+   * This `CString` instance is a clone of the string, so it
+   * is safe to continue using this instance after the `ptr` has been
+   * freed.
+   */
+  ptr: number;
+  byteOffset?: number;
+  byteLength?: number;
+}
+</code></pre>
+<p>To convert from a null-terminated string pointer to a JavaScript string:</p>
+<pre><code class="language-ts">const myString = new CString(ptr);
+</code></pre>
+<p>To convert from a pointer with a known length to a JavaScript string:</p>
+<pre><code class="language-ts">const myString = new CString(ptr, 0, byteLength);
+</code></pre>
+<p><code>new CString</code> clones the C string, so it is safe to continue using <code>myString</code> after <code>ptr</code> has been freed.</p>
+<pre><code class="language-ts">my_library_free(myString.ptr);
+
+// this is safe because myString is a clone
+console.log(myString);
+</code></pre>
+<h5 id="returning-a-string"><a class="header" href="#returning-a-string">Returning a string</a></h5>
+<p>When used in <code>returns</code>, <code>FFIType.cstring</code> coerces the pointer to a JavaScript <code>string</code>. When used in <code>args</code>, <code>cstring</code> is identical to <code>ptr</code>.</p>
+<h4 id="function-pointers-cfunction"><a class="header" href="#function-pointers-cfunction">Function pointers (<code>CFunction</code>)</a></h4>
+<p>To call a function pointer from JavaScript, use <code>CFunction</code></p>
+<p>This is useful if using Node-API (napi) with Bun, and you've already loaded some symbols.</p>
+<pre><code class="language-ts">import { CFunction } from &quot;bun:ffi&quot;;
+
+var myNativeLibraryGetVersion = /* somehow, you got this pointer */
+
+const getVersion = new CFunction({
+  returns: &quot;cstring&quot;,
+  args: [],
+  ptr: myNativeLibraryGetVersion,
+});
+getVersion();
+</code></pre>
+<p>If you have multiple function pointers, you can define them all at once with <code>linkSymbols</code>:</p>
+<pre><code class="language-ts">import { linkSymbols } from &quot;bun:ffi&quot;;
+
+// getVersionPtrs defined elsewhere
+const [majorPtr, minorPtr, patchPtr] = getVersionPtrs();
+
+const lib = linkSymbols({
+  // Unlike with dlopen(), the names here can be whatever you want
+  getMajor: {
+    returns: &quot;cstring&quot;,
+    args: [],
+
+    // Since this doesn't use dlsym(), you have to provide a valid ptr
+    // That ptr could be a number or a bigint
+    // An invalid pointer will crash your program.
+    ptr: majorPtr,
+  },
+  getMinor: {
+    returns: &quot;cstring&quot;,
+    args: [],
+    ptr: minorPtr,
+  },
+  getPatch: {
+    returns: &quot;cstring&quot;,
+    args: [],
+    ptr: patchPtr,
+  },
+});
+
+const [major, minor, patch] = [
+  lib.symbols.getMajor(),
+  lib.symbols.getMinor(),
+  lib.symbols.getPatch(),
+];
+</code></pre>
+<h4 id="pointers"><a class="header" href="#pointers">Pointers</a></h4>
+<p>Bun represents <a href="https://en.wikipedia.org/wiki/Pointer_(computer_programming)">pointers</a> as a <code>number</code> in JavaScript.</p>
+<details>
+<summary>How does a 64 bit pointer fit in a JavaScript number?</summary>
+<p>64-bit processors support up to <a href="https://en.wikipedia.org/wiki/64-bit_computing#Limits_of_processors">52 bits of addressable space</a>.</p>
+<p><a href="https://en.wikipedia.org/wiki/Double-precision_floating-point_format#IEEE_754_double-precision_binary_floating-point_format:_binary64">JavaScript numbers</a> support 53 bits of usable space, so that leaves us with about 11 bits of extra space.</p>
+<p>Why not <code>BigInt</code>?</p>
+<p><code>BigInt</code> is slower. JavaScript engines allocate a separate <code>BigInt</code> which means they can't just fit in a regular javascript value.</p>
+<p>If you pass a <code>BigInt</code> to a function, it will be converted to a <code>number</code></p>
+</details>
+<p><strong>To convert from a TypedArray to a pointer</strong>:</p>
+<pre><code class="language-ts">import { ptr } from &quot;bun:ffi&quot;;
+var myTypedArray = new Uint8Array(32);
+const myPtr = ptr(myTypedArray);
+</code></pre>
+<p><strong>To convert from a pointer to an ArrayBuffer</strong>:</p>
+<pre><code class="language-ts">import { ptr, toArrayBuffer } from &quot;bun:ffi&quot;;
+var myTypedArray = new Uint8Array(32);
+const myPtr = ptr(myTypedArray);
+
+// toTypedArray accepts a `byteOffset` and `byteLength`
+// if `byteLength` is not provided, it is assumed to be a null-terminated pointer
+myTypedArray = new Uint8Array(toArrayBuffer(myPtr, 0, 32), 0, 32);
+</code></pre>
+<p><strong>Pointers &amp; memory safety</strong></p>
+<p>Using raw pointers outside of FFI is extremely not recommended.</p>
+<p>A future version of bun may add a CLI flag to disable <code>bun:ffi</code> (or potentially a separate build of bun).</p>
+<p><strong>Pointer alignment</strong></p>
+<p>If an API expects a pointer sized to something other than <code>char</code> or <code>u8</code>, make sure the typed array is also that size.</p>
+<p>A <code>u64*</code> is not exactly the same as <code>[8]u8*</code> due to alignment</p>
+<h5 id="passing-a-pointer"><a class="header" href="#passing-a-pointer">Passing a pointer</a></h5>
+<p>Where FFI functions expect a pointer, pass a TypedArray of equivalent size</p>
+<p>Easymode:</p>
+<pre><code class="language-ts">import { dlopen, FFIType } from &quot;bun:ffi&quot;;
+
+const {
+  symbols: { encode_png },
+} = dlopen(myLibraryPath, {
+  encode_png: {
+    // FFIType's can be specified as strings too
+    args: [&quot;ptr&quot;, &quot;u32&quot;, &quot;u32&quot;],
+    returns: FFIType.ptr,
+  },
+});
+
+const pixels = new Uint8ClampedArray(128 * 128 * 4);
+pixels.fill(254);
+pixels.subarray(0, 32 * 32 * 2).fill(0);
+
+const out = encode_png(
+  // pixels will be passed as a pointer
+  pixels,
+
+  128,
+  128
+);
+</code></pre>
+<p>The <a href="https://github.com/oven-sh/bun/blob/c6d732eee2721cd6191672cbe2c57fb17c3fffe4/src/bun.js/ffi.exports.js#L146-L148">auto-generated wrapper</a> converts the pointer to a TypedArray</p>
+<details>
+<summary>Hardmode</summary>
+<p>If you don't want the automatic conversion or you want a pointer to a specific byte offset within the TypedArray, you can also directly get the pointer to the TypedArray:</p>
+<pre><code class="language-ts">import { dlopen, FFIType, ptr } from &quot;bun:ffi&quot;;
+
+const {
+  symbols: { encode_png },
+} = dlopen(myLibraryPath, {
+  encode_png: {
+    // FFIType's can be specified as strings too
+    args: [&quot;ptr&quot;, &quot;u32&quot;, &quot;u32&quot;],
+    returns: FFIType.ptr,
+  },
+});
+
+const pixels = new Uint8ClampedArray(128 * 128 * 4);
+pixels.fill(254);
+
+// this returns a number! not a BigInt!
+const myPtr = ptr(pixels);
+
+const out = encode_png(
+  myPtr,
+
+  // dimensions:
+  128,
+  128
+);
+</code></pre>
+</details>
+<h5 id="reading-pointers"><a class="header" href="#reading-pointers">Reading pointers</a></h5>
+<pre><code class="language-ts">const out = encode_png(
+  // pixels will be passed as a pointer
+  pixels,
+
+  // dimensions:
+  128,
+  128
+);
+
+// assuming it is 0-terminated, it can be read like this:
+var png = new Uint8Array(toArrayBuffer(out));
+
+// save it to disk:
+await Bun.write(&quot;out.png&quot;, png);
+</code></pre>
+<h5 id="not-implemented-yet-1"><a class="header" href="#not-implemented-yet-1">Not implemented yet</a></h5>
+<p><code>bun:ffi</code> has a few more things planned but not implemented yet:</p>
+<ul>
+<li>callback functions</li>
+<li>async functions</li>
+</ul>
+<h3 id="node-api-napi"><a class="header" href="#node-api-napi">Node-API (napi)</a></h3>
+<p>Bun.js implements 90% of the APIs available in <a href="https://nodejs.org/api/n-api.html">Node-API</a> (napi).</p>
+<p>You can see the status of <a href="https://github.com/oven-sh/bun/issues/158">this here</a>.</p>
+<p>Loading Node-API modules in Bun.js works the same as in Node.js:</p>
+<pre><code class="language-js">const napi = require(&quot;./my-node-module.node&quot;);
+</code></pre>
+<p>You can also use <code>process.dlopen</code>:</p>
+<pre><code class="language-js">var mod = { exports: {} };
+process.dlopen(mod, &quot;./my-node-module.node&quot;);
+</code></pre>
+<p>As part of that work, Bun.js also polyfills the <a href="https://npmjs.com/package/detect-libc"><code>detect-libc</code></a> package, which is used by many Node-API modules to detect which <code>.node</code> binding to <code>require</code>.</p>
+<p>This implementation of Node-API is from scratch. It doesn't use any code from Node.js.</p>
+<p><strong>Some implementation details</strong></p>
+<p>When requiring a <code>*.node</code> module, Bun's JavaScript transpiler transforms the <code>require</code> expression into a call to <code>import.meta.require</code>:</p>
+<pre><code class="language-js">// this is the input
+require(&quot;./my-node-module.node&quot;);
+
+// this is the output
+import.meta.require(&quot;./my-node-module.node&quot;);
+</code></pre>
+<p>Bun doesn't currently support dynamic requires, but <code>import.meta.require</code> is an escape hatch for that. It uses a <a href="https://github.com/oven-sh/bun/blob/aa87d40f4b7fdfb52575f44d151906ddba6a82d0/src/bun.js/bindings/builtins/js/JSZigGlobalObject.js#L26">JavaScriptCore built-in function</a>.</p>
+<div style="break-before: page; page-break-before: always;"></div><h2 id="environment-variables"><a class="header" href="#environment-variables">Environment variables</a></h2>
+<ul>
+<li><code>GOMAXPROCS</code>: For <code>bun bun</code>, this sets the maximum number of threads to use. If you’re experiencing an issue with <code>bun bun</code>, try setting <code>GOMAXPROCS=1</code> to force bun to run single-threaded</li>
+<li><code>DISABLE_BUN_ANALYTICS=1</code> this disables bun’s analytics. bun records bundle timings (so we can answer with data, &quot;is bun getting faster?&quot;) and feature usage (e.g., &quot;are people actually using macros?&quot;). The request body size is about 60 bytes, so it’s not a lot of data</li>
+<li><code>TMPDIR</code>: Before <code>bun bun</code> completes, it stores the new <code>.bun</code> in <code>$TMPDIR</code>. If unset, <code>TMPDIR</code> defaults to the platform-specific temporary directory (on Linux, <code>/tmp</code> and on macOS <code>/private/tmp</code>)</li>
+</ul>
+<h2 id="credits"><a class="header" href="#credits">Credits</a></h2>
+<ul>
+<li>While written in Zig instead of Go, bun’s JS transpiler, CSS lexer, and node module resolver source code is based on <a href="https://github.com/evanw">@evanw</a>’s <a href="https://github.com/evanw/esbuild">esbuild</a> project. Evan did a fantastic job with esbuild.</li>
+<li>The idea for the name &quot;bun&quot; came from <a href="https://github.com/kipply">@kipply</a></li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div><h3 id="buntranspiler"><a class="header" href="#buntranspiler"><code>Bun.Transpiler</code></a></h3>
+<p><code>Bun.Transpiler</code> lets you use Bun's transpiler from JavaScript (available in Bun.js)</p>
+<pre><code class="language-ts">type Loader = &quot;jsx&quot; | &quot;js&quot; | &quot;ts&quot; | &quot;tsx&quot;;
+
+interface TranspilerOptions {
+  // Replace key with value. Value must be a JSON string.
+  // @example
+  // ```
+  // { &quot;process.env.NODE_ENV&quot;: &quot;\&quot;production\&quot;&quot; }
+  // ```
+  define: Record&lt;string, string&gt;,
+
+  // What is the default loader used for this transpiler?
+  loader: Loader,
+
+  // What platform are we targeting? This may affect how import and/or require is used
+  platform: &quot;browser&quot; | &quot;bun&quot; | &quot;macro&quot; | &quot;node&quot;,
+
+  // TSConfig.json file as stringified JSON or an object
+  // Use this to set a custom JSX factory, fragment, or import source
+  // For example, if you want to use Preact instead of React. Or if you want to use Emotion.
+  tsconfig: string | TSConfig,
+
+  // Replace imports with macros
+  macros: MacroMap,
+}
+
+// This lets you use macros
+interface MacroMap {
+  // @example
+  // ```
+  // {
+  //   &quot;react-relay&quot;: {
+  //     &quot;graphql&quot;: &quot;bun-macro-relay/bun-macro-relay.tsx&quot;
+  //   }
+  // }
+  // ```
+  [packagePath: string]: {
+    [importItemName: string]: string,
+  },
+}
+
+class Bun.Transpiler {
+  constructor(options: TranspilerOptions)
+
+  transform(code: string, loader?: Loader): Promise&lt;string&gt;
+  transformSync(code: string, loader?: Loader): string
+
+  scan(code: string): {exports: string[], imports: Import}
+  scanImports(code: string): Import[]
+}
+
+type Import = {
+  path: string,
+  kind:
+  // import foo from 'bar'; in JavaScript
+  | &quot;import-statement&quot;
+  // require(&quot;foo&quot;) in JavaScript
+  | &quot;require-call&quot;
+  // require.resolve(&quot;foo&quot;) in JavaScript
+  | &quot;require-resolve&quot;
+  // Dynamic import() in JavaScript
+  | &quot;dynamic-import&quot;
+  // @import() in CSS
+  | &quot;import-rule&quot;
+  // url() in CSS
+  | &quot;url-token&quot;
+  // The import was injected by Bun
+  | &quot;internal&quot;
+  // Entry point
+  // Probably won't see this one
+  | &quot;entry-point&quot;
+}
+
+const transpiler = new Bun.Transpiler({ loader: &quot;jsx&quot; });
+</code></pre>
+<h4 id="buntranspilertransformsync"><a class="header" href="#buntranspilertransformsync"><code>Bun.Transpiler.transformSync</code></a></h4>
+<p>This lets you transpile JavaScript, TypeScript, TSX, and JSX using Bun's transpiler. It does not resolve modules.</p>
+<p>It is synchronous and runs in the same thread as other JavaScript code.</p>
+<pre><code class="language-js">const transpiler = new Bun.Transpiler({ loader: &quot;jsx&quot; });
+transpiler.transformSync(&quot;&lt;div&gt;hi!&lt;/div&gt;&quot;);
+</code></pre>
+<pre><code class="language-js">import { __require as require } from &quot;bun:wrap&quot;;
+import * as JSX from &quot;react/jsx-dev-runtime&quot;;
+var jsx = require(JSX).jsxDEV;
+
+export default jsx(
+  &quot;div&quot;,
+  {
+    children: &quot;hi!&quot;,
+  },
+  undefined,
+  false,
+  undefined,
+  this
+);
+</code></pre>
+<p>If a macro is used, it will be run in the same thread as the transpiler, but in a separate event loop from the rest of your application. Currently, globals between macros and regular code are shared, which means it is possible (but not recommended) to share states between macros and regular code. Attempting to use AST nodes outside of a macro is undefined behavior.</p>
+<h4 id="buntranspilertransform"><a class="header" href="#buntranspilertransform"><code>Bun.Transpiler.transform</code></a></h4>
+<p>This lets you transpile JavaScript, TypeScript, TSX, and JSX using Bun's transpiler. It does not resolve modules.</p>
+<p>It is async and automatically runs in Bun's worker threadpool. That means, if you run it 100 times, it will run it across <code>Math.floor($cpu_count * 0.8)</code> threads without blocking the main JavaScript thread.</p>
+<p>If code uses a macro, it will potentially spawn a new copy of Bun.js' JavaScript runtime environment in that new thread.</p>
+<p>Unless you're transpiling <em>many</em> large files, you should probably use <code>Bun.Transpiler.transformSync</code>. The cost of the threadpool will often take longer than actually transpiling code.</p>
+<pre><code class="language-js">const transpiler = new Bun.Transpiler({ loader: &quot;jsx&quot; });
+await transpiler.transform(&quot;&lt;div&gt;hi!&lt;/div&gt;&quot;);
+</code></pre>
+<pre><code class="language-js">import { __require as require } from &quot;bun:wrap&quot;;
+import * as JSX from &quot;react/jsx-dev-runtime&quot;;
+var jsx = require(JSX).jsxDEV;
+
+export default jsx(
+  &quot;div&quot;,
+  {
+    children: &quot;hi!&quot;,
+  },
+  undefined,
+  false,
+  undefined,
+  this
+);
+</code></pre>
+<p>You can also pass a <code>Loader</code> as a string</p>
+<pre><code class="language-js">await transpiler.transform(&quot;&lt;div&gt;hi!&lt;/div&gt;&quot;, &quot;tsx&quot;);
+</code></pre>
+<h4 id="buntranspilerscan"><a class="header" href="#buntranspilerscan"><code>Bun.Transpiler.scan</code></a></h4>
+<p>This is a fast way to get a list of imports &amp; exports used in a JavaScript/jsx or TypeScript/tsx file.</p>
+<p>This function is synchronous.</p>
+<pre><code class="language-ts">const transpiler = new Bun.Transpiler({ loader: &quot;ts&quot; });
+
+transpiler.scan(`
+import React from 'react';
+import Remix from 'remix';
+import type {ReactNode} from 'react';
+
+export const loader = () =&gt; import('./loader');
+`);
+</code></pre>
+<pre><code class="language-ts">{
+  &quot;exports&quot;: [
+    &quot;loader&quot;
+  ],
+  &quot;imports&quot;: [
+    {
+      &quot;kind&quot;: &quot;import-statement&quot;,
+      &quot;path&quot;: &quot;react&quot;
+    },
+    {
+      &quot;kind&quot;: &quot;import-statement&quot;,
+      &quot;path&quot;: &quot;remix&quot;
+    },
+    {
+      &quot;kind&quot;: &quot;dynamic-import&quot;,
+      &quot;path&quot;: &quot;./loader&quot;
+    }
+  ]
+}
+
+</code></pre>
+<h4 id="buntranspilerscanimports"><a class="header" href="#buntranspilerscanimports"><code>Bun.Transpiler.scanImports</code></a></h4>
+<p>This is a fast path for getting a list of imports used in a JavaScript/jsx or TypeScript/tsx file. It skips the visiting pass, which means it is faster but less accurate. You probably won't notice a difference between <code>Bun.Transpiler.scan</code> and <code>Bun.Transpiler.scanImports</code> often. You might notice it for very large files (megabytes).</p>
+<p>This function is synchronous.</p>
+<pre><code class="language-ts">const transpiler = new Bun.Transpiler({ loader: &quot;ts&quot; });
+
+transpiler.scanImports(`
+import React from 'react';
+import Remix from 'remix';
+import type {ReactNode} from 'react';
+
+export const loader = () =&gt; import('./loader');
+`);
+</code></pre>
+<pre><code class="language-json">[
+  {
+    &quot;kind&quot;: &quot;import-statement&quot;,
+    &quot;path&quot;: &quot;react&quot;
+  },
+  {
+    &quot;kind&quot;: &quot;import-statement&quot;,
+    &quot;path&quot;: &quot;remix&quot;
+  },
+  {
+    &quot;kind&quot;: &quot;dynamic-import&quot;,
+    &quot;path&quot;: &quot;./loader&quot;
+  }
+]
+</code></pre>
+<p>x</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+            </nav>
+
+        </div>
+
+        <script type="text/javascript">
+            window.playground_copyable = true;
+        </script>
+        <script src="elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="searcher.js" type="text/javascript" charset="utf-8"></script>
+        <script src="clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+        <script type="text/javascript">
+        window.addEventListener('load', function() {
+            window.setTimeout(window.print, 100);
+        });
+        </script>
+    </body>
+</html>
