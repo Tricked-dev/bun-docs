@@ -1,0 +1,10 @@
+[book]
+authors = ["jarred-Sumner", "Tricked-dev"]
+language = "en"
+multilingual = false
+src = "src"
+title = "Bun Runtime"
+
+[output.html]
+default-theme = "ayu"
+# cname = ""
