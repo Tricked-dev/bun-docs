@@ -6,5 +6,6 @@ src = "src"
 title = "Bun Runtime"
 
 [output.html]
+site-url = "/bun-docs/"
 default-theme = "ayu"
 # cname = ""
