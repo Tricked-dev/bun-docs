@@ -154,7 +154,7 @@ Environment variables have a higher priority than `bunfig.toml`.
 
 | Name                             | Description                                                   |
 | -------------------------------- | ------------------------------------------------------------- |
-| BUN_CONFIG_REGISTRY              | Set an npm registry (default: <https://registry.npmjs.org>)   |
+| BUN_CONFIG_REGISTRY              | Set an npm registry (default: registry.npmjs.org)             |
 | BUN_CONFIG_TOKEN                 | Set an auth token (currently does nothing)                    |
 | BUN_CONFIG_LOCKFILE_SAVE_PATH    | File path to save the lockfile to (default: bun.lockb)        |
 | BUN_CONFIG_YARN_LOCKFILE         | Save a Yarn v1-style yarn.lock                                |
@@ -175,7 +175,7 @@ When a `bun.lockb` exists and `package.json` hasn’t changed, bun downloads mis
 
 #### Platform-specific dependencies?
 
-bun stores normalized `cpu` and `os` values from npm in the lockfile, along with the resolved packages. It skips downloading, extracting, and installing packages disabled for the current target at runtime. This means the lockfile won’t change between platforms/architectures even if the packages ultimately installed do change.
+bun stores normalized `cpu` and `os` values from npm in the lockfile, along with the resolved packages. It skips downloading, extracting, and installing packages disabled for the current target at runtime. This means the lockfile won’t change between platforms\/architectures even if the packages ultimately installed do change.
 
 #### Peer dependencies?
 
@@ -261,7 +261,7 @@ react-scripts eject
 4 scripts
 ```
 
-`bun run` automatically loads environment variables from `.env` into the shell/task. `.env` files are loaded with the same priority as the rest of bun, so that means:
+`bun run` automatically loads environment variables from `.env` into the shell\/task. `.env` files are loaded with the same priority as the rest of bun, so that means:
 
 1. `.env.local` is first
 2. if (`$NODE_ENV` === `"production"`) `.env.production` else `.env.development`
@@ -474,7 +474,7 @@ ELSE IF local template
 
 4. Parse the `package.json` (again!), update `name` to be `${basename(destination)}`, remove the `bun-create` section from the `package.json` and save the updated `package.json` to disk.
    - IF Next.js is detected, add `bun-framework-next` to the list of dependencies
-   - IF Create React App is detected, add the entry point in /src/index.{js,jsx,ts,tsx} to `public/index.html`
+   - IF Create React App is detected, add the entry point in `/src/index.{js,jsx,ts,tsx}` to `public/index.html`
    - IF Relay is detected, add `bun-macro-relay` so that Relay works
 5. Auto-detect the npm client, preferring `pnpm`, `yarn` (v1), and lastly `npm`
 6. Run any tasks defined in `"bun-create": { "preinstall" }` with the npm client
