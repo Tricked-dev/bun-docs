@@ -10,14 +10,14 @@ const headers = content.astro.headers;
 <article id="article" class="content">
 	<section class="main-section">
 		<h1 class="content-title" id="overview">{title}</h1>
-		<nav class="block sm:hidden">
+		<!-- <nav class="block sm:hidden">
 			<TableOfContents client:media="(max-width: 50em)" {headers} />
-		</nav>
+		</nav> -->
 		<slot />
 	</section>
-	<nav class="block sm:hidden">
+	<!-- <nav class="block sm:hidden">
 		<MoreMenu editHref={githubEditUrl} />
-	</nav>
+	</nav> -->
 </article>
 
 <style>

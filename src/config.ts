@@ -26,29 +26,45 @@ export const COMMUNITY_INVITE_URL = `https://bun.sh/discord`;
 // Uncomment this to enable site search.
 // See "Algolia" section of the README for more information.
 // export const ALGOLIA = {
-//   indexName: 'XXXXXXXXXX',
-//   appId: 'XXXXXXXXXX',
-//   apiKey: 'XXXXXXXXXX',
-// }
+//   indexName: "XXXXXXXXXX",
+//   appId: "XXXXXXXXXX",
+//   apiKey: "XXXXXXXXXX",
+// };
 
 export const SIDEBAR = {
   en: [
-    { text: "", header: true },
-    { text: "Basics", header: true },
+    { text: "Basics", header: true, link: "en/introduction" },
+    { text: "Introduction", link: "en/introduction" },
     { text: "Installing", link: "en/installing" },
-    { text: "Using", link: "en/using" },
+    { text: "Using bun.js", link: "en/using" },
     { text: "Frameworks", link: "en/frameworks" },
     { text: "Examples", link: "en/examples" },
-    { text: "TroubleShooting", link: "en/troubleshooting" },
+    { text: "Troubleshooting", link: "en/troubleshooting" },
     { text: "Configuration", link: "en/configuration" },
     { text: "Limitations & intended usage", link: "en/limitations" },
-    { text: "Reference", link: "en/reference" },
-    { text: "bun:sqlite", link: "en/bun_sqlite" },
+    { text: "Caveats", link: "en/caveats" },
+    { text: "Reference", link: "en/bun_install", header: true },
+    { text: "bun:install", link: "en/bun_install" },
+    { text: "bun:create", link: "en/bun_create" },
+    { text: "bun:run", link: "en/bun_run" },
+    { text: "bun:bun", link: "en/bun_bun" },
+    { text: "bun:upgrade", link: "en/bun_upgrade" },
+    { text: "bun:completion", link: "en/bun_completion" },
+    { text: "Bun.sqlite", link: "en/bun_sqlite" },
     { text: "Bun.serve", link: "en/bun_serve" },
     { text: "Bun.write", link: "en/bun_write" },
-    { text: "Advanced", header: true },
+    { text: "Advanced", header: true, link: "en/datatypes" },
+    { text: "Datatypes", link: "en/datatypes" },
     { text: "FFI", link: "en/ffi" },
     { text: "Loaders", link: "en/loaders" },
     { text: "Transpiler", link: "en/transpiler" },
+    { text: "NodeJS API", link: "en/node_api" },
+    { text: "Developing Bun", header: true, link: "en/developing" },
+    {
+      text: "VSCode Dev Container (Linux)",
+      link: "en/developing#vscode-dev-container-linux",
+    },
+    { text: "macOS", link: "en/developing#macos" },
+    { text: "Credits", link: "en/credits" },
   ],
 };
