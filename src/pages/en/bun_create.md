@@ -156,7 +156,7 @@ Any command that starts with `"bun "` will be run without npm, relying on the fi
 
 When you run `bun create ${template} ${destination}`, here’s what happens:
 
-> IF remote template
+IF remote template
 
     1. GET `registry.npmjs.org/@bun-examples/${template}/latest` and parse it
     2. GET `registry.npmjs.org/@bun-examples/${template}/-/${template}-${latestVersion}.tgz`
@@ -164,32 +164,30 @@ When you run `bun create ${template} ${destination}`, here’s what happens:
 
       - If there are files that would overwrite, warn and exit unless `--force` is passed
 
-> IF github repo
+IF github repo
 
     1. Download the tarball from GitHub’s API
     2. Decompress & extract into `${destination}`
 
       - If there are files that would overwrite, warn and exit unless `--force` is passed
 
-> ELSE IF local template
+ELSE IF local template
 
     1. Open local template folder
     2. Delete destination directory recursively
     3. Copy files recursively using the fastest system calls available (on macOS `fcopyfile` and Linux, `copy_file_range`). Do not copy or traverse into `node_modules` folder if exists (this alone makes it faster than `cp`).
     4. Parse the `package.json` (again!), update `name` to be `${basename(destination)}`, remove the `bun-create` section from the `package.json` and save the updated `package.json` to disk.
       - IF Next.js is detected, add `bun-framework-next` to the list of dependencies
-      - IF Create React App is detected, add the entry point in /src/index.{js,jsx,ts,tsx} to `public/index.html`
+      - IF Create React App is detected, add the entry point in `/src/index.{js,jsx,ts,tsx}` to `public/index.html`
       - IF Relay is detected, add `bun-macro-relay` so that Relay works
     5. Auto-detect the npm client, preferring `pnpm`, `yarn` (v1), and lastly `npm`
     6. Run any tasks defined in `"bun-create": { "preinstall" }` with the npm client
     7. Run `${npmClient} install` unless `--no-install` is passed OR no dependencies are in package.json
     8. Run any tasks defined in `"bun-create": { "preinstall" }` with the npm client
     9. Run `git init; git add -A .; git commit -am "Initial Commit";`
-
       - Rename `gitignore` to `.gitignore`. NPM automatically removes `.gitignore` files from appearing in packages.
       - If there are dependencies, this runs in a separate thread concurrently while node_modules are being installed
       - Using libgit2 if available was tested and performed 3x slower in microbenchmarks
-
     10. Done
 
 `misctools/publish-examples.js` publishes all examples to npm.
