@@ -1,0 +1,45 @@
+---
+import {SIDEBAR} from "../../config.ts";
+
+let { currentPage } = Astro.props;
+currentPage = currentPage.replace("/", "");
+const pages = SIDEBAR.en;
+const pageLinks = pages.map((item:any) => item.link);
+
+
+let page = pageLinks.indexOf(currentPage);
+let prev = page - 1;
+prev = prev >= 1 ? pages[prev]: null;
+let next = page + 1;
+next = pages.length >= next ? pages[next]: null;
+
+---
+
+<div class="pagination">
+	{prev? <a class="btn-pagination" href={`/${prev.link}`}>&larr; {prev.text} </a>: ""}
+	{next? <a class="btn-pagination right" href={`/${next.link}`}>{next.text} &rarr;</a>: ""}
+</div>
+
+<style>
+	.pagination{
+        /* border-top: 1px solid var(--theme-text);
+		padding-top: 30px; */
+	}
+
+    .btn-pagination {
+		font-size: 16px;
+		color: var(--theme-text);
+		text-decoration: none;
+		padding: 10px 30px;
+		border: 1px solid var(--theme-text);
+		border-radius: 6px;
+    }
+
+	.btn-pagination:hover{
+		background-color: var(--theme-bg-hover);
+	}
+
+    .right{
+	    float: right;
+    }
+</style>

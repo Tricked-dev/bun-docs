@@ -7,6 +7,7 @@ import PageContent from "../components/PageContent/PageContent.astro";
 import LeftSidebar from "../components/LeftSidebar/LeftSidebar.astro";
 import RightSidebar from "../components/RightSidebar/RightSidebar.astro";
 import * as CONFIG from "../config";
+import Pagination from "../components/PageContent/Pagination.astro";
 
 const { content = {} } = Astro.props;
 const currentPage = new URL(Astro.request.url).pathname;
@@ -120,6 +121,7 @@ const githubEditUrl = CONFIG.GITHUB_EDIT_URL && CONFIG.GITHUB_EDIT_URL + current
 			<PageContent {content} {githubEditUrl}>
 				<slot />
 			</PageContent>
+			<Pagination currentPage={currentPage} />
 		</div>
 		<aside id="grid-right" class="grid-sidebar" title="Table of Contents">
 			<RightSidebar {content} {githubEditUrl} />
